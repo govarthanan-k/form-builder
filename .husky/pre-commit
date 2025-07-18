@@ -1,0 +1,8 @@
+echo "🎨 Checking formatting of all files..."
+npm run format:check
+
+echo "🧹 Running full ESLint check..."
+npm run lint
+
+echo "🧠 Running full TypeScript type check..."
+npm run typecheck
