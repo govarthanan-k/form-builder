@@ -14,7 +14,7 @@ export const SiteHeader = () => {
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
           <Image src="/logo.svg" alt="Natwest Logo" width={174} height={50} />
-          <span className="text-lg font-semibold">YourApp</span>
+          <span className="text-lg font-semibold">eForm Designer</span>
         </Link>
 
         <div className="flex items-center gap-6 space-x-4">
@@ -25,9 +25,7 @@ export const SiteHeader = () => {
             Forms
           </Link>
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-sm">
-              Developer Mode
-            </span>
+            <span className="text-muted-foreground text-sm">Dev Mode</span>
             <Switch />
           </div>
 

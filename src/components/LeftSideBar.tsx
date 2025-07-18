@@ -10,6 +10,12 @@ import {
 import { DraggableItem } from "./Droppable";
 import { TagInput } from "./TagInput";
 
+const AVAILABLE_COMPONENTS = [
+  { id: "input" },
+  { id: "textarea" },
+  { id: "checkbox" },
+];
+
 // 84.516
 export const LeftSideBar = () => {
   return (
@@ -62,8 +68,8 @@ export const LeftSideBar = () => {
           </AccordionTrigger>
           <AccordionContent className="bg-muted space-y-3 rounded-md p-4">
             <div className="flex flex-wrap justify-start gap-5">
-              {Array.from({ length: 25 }).map((_, i) => (
-                <DraggableItem key={i} id={i}>
+              {AVAILABLE_COMPONENTS.map((el) => (
+                <DraggableItem key={el.id} id={el.id}>
                   <button className="flex h-[50px] w-[50px] cursor-grab items-center justify-center rounded-md border-2 border-gray-400 hover:border-blue-500 hover:text-blue-500 focus:border-blue-500 focus:text-blue-500 focus:outline-none active:cursor-grabbing">
                     <Type className="h-6 w-6" />
                   </button>

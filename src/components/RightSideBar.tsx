@@ -1,4 +1,4 @@
-import { RotateCcw, Trash2 } from "lucide-react";
+import { AlertCircleIcon, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,8 +14,9 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { JsonEditor } from "./JsonEditor";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
-export const RightSideBar = () => {
+export const RightSideBar = ({ schema }: { schema: object }) => {
   return (
     <div
       className="w-full overflow-y-auto"
@@ -61,6 +62,23 @@ export const RightSideBar = () => {
               <CardTitle>Editing Properties of First Name</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-6">
+              <div
+                className="grid w-full items-start gap-4"
+                id="error_container"
+              >
+                <Alert variant="destructive">
+                  <AlertCircleIcon />
+                  <AlertTitle>Unable to process your payment.</AlertTitle>
+                  <AlertDescription>
+                    <p>Please verify your billing information and try again.</p>
+                    <ul className="list-inside list-disc text-sm">
+                      <li>Check your card details</li>
+                      <li>Ensure sufficient funds</li>
+                      <li>Verify billing address</li>
+                    </ul>
+                  </AlertDescription>
+                </Alert>
+              </div>
               <div className="grid gap-3">
                 <Label htmlFor="fieldName">Field Name</Label>
                 <Input id="fieldName" defaultValue="firstName" />
@@ -107,7 +125,7 @@ export const RightSideBar = () => {
         <TabsContent value="Data Schema">
           <Card>
             <CardContent className="grid gap-6">
-              <JsonEditor />
+              <JsonEditor value={schema} />
             </CardContent>
           </Card>
         </TabsContent>

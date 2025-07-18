@@ -1,16 +1,16 @@
 "use client";
 
-import { RotateCcw, Settings, Trash2 } from "lucide-react";
+import { AlertCircleIcon, ArrowRight, Settings, Trash2 } from "lucide-react";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -30,12 +30,16 @@ export const MiddlePanel = () => {
       style={{ height: "calc(100vh - 88px)" }}
     >
       <div className="middle-panel-steps m-5 w-1/5">
-        <Card className="pb-0">
+        <Card className="gap-0 pt-4 pb-0">
           <CardHeader>
-            <CardTitle>Steps</CardTitle>
+            <CardDescription>
+              <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+                Steps
+              </h2>
+            </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-2 px-0">
-            <div className="border-border dark:border-border/40 w-full border-b bg-purple-800 px-6 py-3">
+            <div className="border-border dark:border-border/40 w-full border-b bg-[#5e10b1] px-6 py-3">
               1 - Step-0
             </div>
             <div className="border-border dark:border-border/40 w-full border-b px-6 py-3">
@@ -56,6 +60,20 @@ export const MiddlePanel = () => {
             <DropZone />
           </div>
           <CardContent className="grid gap-6">
+            <div className="grid w-full items-start gap-4" id="error_container">
+              <Alert variant="destructive">
+                <AlertCircleIcon />
+                <AlertTitle>Unable to process your payment.</AlertTitle>
+                <AlertDescription>
+                  <p>Please verify your billing information and try again.</p>
+                  <ul className="list-inside list-disc text-sm">
+                    <li>Check your card details</li>
+                    <li>Ensure sufficient funds</li>
+                    <li>Verify billing address</li>
+                  </ul>
+                </AlertDescription>
+              </Alert>
+            </div>
             <div
               className="group relative grid gap-3 rounded-md border border-blue-500 p-4 px-4 pt-6 pb-4 transition-colors"
               id="field"
@@ -90,40 +108,45 @@ export const MiddlePanel = () => {
                 </div>
               </div>
 
-              <Label htmlFor="fieldName">Field Name</Label>
-              <Input id="fieldName" defaultValue="firstName" />
+              <Label htmlFor="firstName">First Name</Label>
+              <Input id="firstName" defaultValue="Govarthanan" />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="label">Label</Label>
-              <Input id="label" defaultValue="First Name" />
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input id="lastName" defaultValue="K" />
             </div>
 
             <div className="grid gap-3">
-              <Label htmlFor="placeholder">Placeholder</Label>
-              <Input id="placeholder" defaultValue="Enter your first name" />
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" defaultValue="govarthanan@live.com" />
             </div>
 
             <div className="grid gap-3">
-              <Label htmlFor="defaultValue">Default Value</Label>
-              <Input id="defaultValue" />
+              <Label htmlFor="mobile">Mobile Number</Label>
+              <Input id="mobile" />
             </div>
 
-            <div className="flex items-center gap-3">
-              <Checkbox id="required" />
-              <Label htmlFor="required">Required</Label>
+            <div className="grid gap-3">
+              <Label htmlFor="address">Address</Label>
+              <Input id="address" />
             </div>
           </CardContent>
           <CardFooter className="w-full">
-            <div className="flex w-full gap-2">
-              <Button variant="outline" className="w-1/2 rounded-md px-4 py-2">
-                <RotateCcw />
-                Reset Field
-              </Button>
-              <Button
-                variant="destructive"
-                className="w-1/2 rounded-md px-4 py-2"
-              >
-                <Trash2 /> Delete Field
+            <div className="mt-6 flex w-full items-center justify-between">
+              {/* Left buttons */}
+              <div className="flex gap-4">
+                <Button className="bg-green-600 text-white hover:bg-green-700">
+                  Save
+                </Button>
+                <Button className="bg-blue-600 text-white hover:bg-blue-700">
+                  Submit
+                </Button>
+              </div>
+
+              {/* Right button */}
+              <Button>
+                Next
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </CardFooter>

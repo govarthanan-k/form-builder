@@ -2,7 +2,7 @@ import { PropsWithChildren } from "react";
 import { useDraggable } from "@dnd-kit/core";
 
 export interface DraggableItemProps extends PropsWithChildren {
-  id: number;
+  id: string;
 }
 
 export function DraggableItem(props: DraggableItemProps) {
