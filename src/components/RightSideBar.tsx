@@ -1,22 +1,33 @@
 "use client";
 
-import { AlertCircleIcon, RotateCcw, Trash2 } from "lucide-react";
+import { RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { FormSchema } from "../app/page";
+import { useAppDispatch, useAppSelector } from "../rtk/app/hooks";
+import { updateActiveTabInRightPanel } from "../rtk/features";
+import { RightPanelTab } from "../rtk/features/editor/editor.types";
+import { FieldPropertiesForm } from "./FieldPropertiesForm";
 import { JsonEditor } from "./JsonEditor";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
-export const RightSideBar = ({ schema }: { schema: FormSchema }) => {
+export const RightSideBar = () => {
+  const { selectedField, devMode, activeTabInRightPanel, formDefinition, activeStep, formData } = useAppSelector(
+    (state) => state.editor
+  );
+  const dispatch = useAppDispatch();
+
   return (
     <div className="w-full overflow-y-auto" style={{ height: "calc(100vh - 88px)" }}>
-      <Tabs defaultValue="Inspect" className="w-full">
+      <Tabs
+        defaultValue="Inspect"
+        className="w-full"
+        value={activeTabInRightPanel}
+        onValueChange={(value) => {
+          dispatch(updateActiveTabInRightPanel({ activeTabInRightPanel: value as RightPanelTab }));
+        }}
+      >
         <TabsList className="flex w-full">
           <TabsTrigger
             value="Inspect"
@@ -25,24 +36,28 @@ export const RightSideBar = ({ schema }: { schema: FormSchema }) => {
             Inspect
           </TabsTrigger>
 
-          <TabsTrigger
-            value="Data Schema"
-            className="flex-1 border-b-2 border-transparent text-center data-[state=active]:border-blue-500"
-          >
-            Data Schema
-          </TabsTrigger>
-          <TabsTrigger
-            value="UI Schema"
-            className="flex-1 border-b-2 border-transparent text-center data-[state=active]:border-blue-500"
-          >
-            UI Schema
-          </TabsTrigger>
-          <TabsTrigger
-            value="Form Data"
-            className="flex-1 border-b-2 border-transparent text-center data-[state=active]:border-blue-500"
-          >
-            Form Data
-          </TabsTrigger>
+          {devMode && (
+            <>
+              <TabsTrigger
+                value="Data Schema"
+                className="flex-1 border-b-2 border-transparent text-center data-[state=active]:border-blue-500"
+              >
+                Data Schema
+              </TabsTrigger>
+              <TabsTrigger
+                value="UI Schema"
+                className="flex-1 border-b-2 border-transparent text-center data-[state=active]:border-blue-500"
+              >
+                UI Schema
+              </TabsTrigger>
+              <TabsTrigger
+                value="Form Data"
+                className="flex-1 border-b-2 border-transparent text-center data-[state=active]:border-blue-500"
+              >
+                Form Data
+              </TabsTrigger>
+            </>
+          )}
           <TabsTrigger
             value="Rules"
             className="flex-1 border-b-2 border-transparent text-center data-[state=active]:border-blue-500"
@@ -53,10 +68,14 @@ export const RightSideBar = ({ schema }: { schema: FormSchema }) => {
         <TabsContent value="Inspect">
           <Card>
             <CardHeader>
-              <CardTitle>Editing Properties of First Name</CardTitle>
+              {selectedField ? (
+                <CardTitle>Editing Properties of {selectedField}</CardTitle>
+              ) : (
+                <CardTitle>Form Properties</CardTitle>
+              )}
             </CardHeader>
             <CardContent className="grid gap-6">
-              <div className="grid w-full items-start gap-4" id="error_container">
+              {/* <div className="grid w-full items-start gap-4" id="error_container">
                 <Alert variant="destructive">
                   <AlertCircleIcon />
                   <AlertTitle>Unable to process your payment.</AlertTitle>
@@ -92,7 +111,8 @@ export const RightSideBar = ({ schema }: { schema: FormSchema }) => {
               <div className="flex items-center gap-3">
                 <Checkbox id="required" />
                 <Label htmlFor="required">Required</Label>
-              </div>
+              </div> */}
+              <FieldPropertiesForm />
             </CardContent>
             <CardFooter className="w-full">
               <div className="flex w-full gap-2">
@@ -110,30 +130,30 @@ export const RightSideBar = ({ schema }: { schema: FormSchema }) => {
         <TabsContent value="Data Schema">
           <Card>
             <CardContent className="grid gap-6">
-              <JsonEditor value={schema.dataSchema} />
+              <JsonEditor value={formDefinition.stepDefinitions[activeStep].schema} />
             </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="UI Schema">
           <Card>
             <CardContent className="grid gap-6">
-              <JsonEditor value={schema.uiSchema} />
+              <JsonEditor value={formDefinition.stepDefinitions[activeStep].uiSchema} />
             </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="Form Data">
           <Card>
             <CardContent className="grid gap-6">
-              <JsonEditor />
+              <JsonEditor value={formData} />
             </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="Rules">
           <Card>
             <CardContent className="grid gap-6">
-              <h2 className="text-lg font-semibold text-slate-100">Step Rules</h2>
+              <h2 className="text-primary text-lg font-semibold">Step Rules</h2>
               <JsonEditor height="35vh" />
-              <h2 className="text-lg font-semibold text-slate-100">Form Rules</h2>
+              <h2 className="text-primary text-lg font-semibold">Form Rules</h2>
               <JsonEditor height="35vh" />
             </CardContent>
           </Card>

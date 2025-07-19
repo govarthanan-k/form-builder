@@ -7,25 +7,38 @@ import { FieldTemplateProps } from "@rjsf/utils";
 import { Settings, Trash2 } from "lucide-react";
 
 import { handleKey } from "../../components/MiddlePanel";
+import { cn } from "../../lib/utils";
+import { useAppDispatch, useAppSelector } from "../../rtk/app/hooks";
+import { deleteField, updateSelectedField } from "../../rtk/features";
 
 export const CustomFieldTemplate = (props: FieldTemplateProps) => {
   const FieldTemplate = getDefaultRegistry().templates.FieldTemplate;
 
-  console.log("Props of FT => ", props);
+  const { selectedField } = useAppSelector((state) => state.editor);
 
-  return (
-    <div className="group relative grid gap-3 rounded-md border border-blue-500 p-4 px-4 pt-6 pb-4 transition-colors" id="field">
-      <div className="text-muted-foreground dark:text-muted absolute top-1.5 right-1.5 flex gap-x-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+  const dispatch = useAppDispatch();
+  console.log({ selectedField: `eforms_root.${selectedField}`, "props.id": props.id });
+
+  return props.id !== "eform_root" ? (
+    <div
+      className={cn(
+        "group relative box-border grid gap-3 border p-4 px-4 pt-6 pb-4 transition-colors",
+        selectedField && `eforms_root.${selectedField}` === props.id ? "rounded-md border border-blue-500" : "border-transparent"
+      )}
+    >
+      <div className="text-muted-foreground dark:text-muted absolute top-2.5 right-2.5 flex gap-x-2">
         {/* Delete icon */}
         <div
           role="button"
           tabIndex={0}
           aria-label="Delete field"
           className="focus:ring-ring h-4 w-4 cursor-pointer rounded-sm outline-none focus:ring-2 focus:ring-offset-2"
-          onClick={() => alert("Delete this field")}
+          onClick={() => {
+            dispatch(deleteField({ fieldId: props.id }));
+          }}
           onKeyDown={(e) => handleKey(e, () => alert("Delete this field"))}
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-4 w-4" color="red" />
         </div>
 
         {/* Settings icon */}
@@ -34,14 +47,22 @@ export const CustomFieldTemplate = (props: FieldTemplateProps) => {
           tabIndex={0}
           aria-label="Open field settings"
           className="focus:ring-ring h-4 w-4 cursor-pointer rounded-sm outline-none focus:ring-2 focus:ring-offset-2"
-          onClick={() => alert("Edit this field")}
-          onKeyDown={(e) => handleKey(e, () => alert("Edit this field"))}
+          onClick={() => {
+            dispatch(updateSelectedField({ selectedField: props.id }));
+          }}
+          onKeyDown={(e) =>
+            handleKey(e, () => {
+              dispatch(updateSelectedField({ selectedField: props.id }));
+            })
+          }
         >
-          <Settings className="h-4 w-4" />
+          <Settings className="h-4 w-4" color="blue" />
         </div>
       </div>
 
       <FieldTemplate {...props} />
     </div>
+  ) : (
+    <FieldTemplate {...props} />
   );
 };

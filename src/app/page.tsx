@@ -5,11 +5,12 @@ import { DndContext } from "@dnd-kit/core";
 import { UiSchema } from "@rjsf/utils";
 import { JSONSchema7 } from "json-schema";
 
-import { LeftSideBar } from "@/components/LeftSideBar";
+import { FieldType, LeftSideBar } from "@/components/LeftSideBar";
 import { RightSideBar } from "@/components/RightSideBar";
 
 import { MiddlePanel } from "../components/MiddlePanel";
-import { descriptors } from "../rjsf/descriptors";
+import { useAppDispatch } from "../rtk/app/hooks";
+import { addField } from "../rtk/features";
 
 export interface FormSchema {
   dataSchema: JSONSchema7;
@@ -18,36 +19,22 @@ export interface FormSchema {
 
 export default function Dashboard() {
   const [isClient, setIsClient] = useState(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  const [droppedItems, setDroppedItems] = useState<FormSchema>({
-    dataSchema: {
-      type: "object",
-      required: [],
-      properties: {},
-    },
-    uiSchema: {},
-  });
 
   if (!isClient) return null;
 
   return (
     <DndContext
       onDragEnd={(event) => {
-        const fieldType = event.active.id as string;
+        const fieldType = event.active.id as FieldType;
         const isDrop = event.over?.id === "drop-zone";
         if (isDrop) {
-          setDroppedItems((prev) => {
-            const { dataSchema, uiSchema } = descriptors[fieldType];
-            const newFieldName = `${fieldType}${Object.keys(prev.dataSchema.properties || {}).length + 1}`;
-            return {
-              dataSchema: { ...prev.dataSchema, properties: { ...prev.dataSchema.properties, [newFieldName]: dataSchema } },
-              uiSchema: { ...prev.uiSchema, [newFieldName]: uiSchema },
-            };
-          });
+          // addField
+          dispatch(addField({ fieldType }));
         }
       }}
     >
@@ -59,10 +46,10 @@ export default function Dashboard() {
           className="flex flex-1 items-center justify-center rounded-md border border-gray-400"
           style={{ height: "calc(100vh - 88px)" }}
         >
-          <MiddlePanel schema={droppedItems} />
+          <MiddlePanel />
         </div>
         <div className="flex w-2/8 items-center justify-center rounded-md border border-gray-400">
-          <RightSideBar schema={droppedItems} />
+          <RightSideBar />
         </div>
       </div>
     </DndContext>

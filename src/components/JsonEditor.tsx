@@ -1,6 +1,7 @@
 "use client";
 
 import Editor from "@monaco-editor/react";
+import { useTheme } from "next-themes";
 
 export const JsonEditor = ({ height = "80.75vh", value }: { height?: string; value?: object }) => {
   const json = {
@@ -9,13 +10,15 @@ export const JsonEditor = ({ height = "80.75vh", value }: { height?: string; val
     items: [1, 2, 3],
   };
 
+  const { resolvedTheme } = useTheme();
+
   return (
     <Editor
       defaultLanguage="json"
       height={height}
       // defaultValue={}
       value={JSON.stringify(value ?? json, null, 2)}
-      theme="vs-dark"
+      theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
       options={{
         fontSize: 14,
         readOnly: false, // Set true if you want it locked

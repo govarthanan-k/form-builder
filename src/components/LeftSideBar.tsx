@@ -8,7 +8,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { DraggableItem } from "./Dragable";
 import { TagInput } from "./TagInput";
 
-const AVAILABLE_COMPONENTS = [
+export type FieldType = "input" | "textarea" | "checkbox" | "dropdown";
+
+export const AVAILABLE_COMPONENTS = [
   { id: "input", name: "Input", icon: <Type className="h-6 w-6" /> },
   { id: "textarea", name: "Textarea", icon: <Type className="h-6 w-6" /> },
   { id: "checkbox", name: "Checkbox", icon: <SquareCheck className="h-6 w-6" /> },

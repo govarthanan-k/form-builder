@@ -8,7 +8,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
+import { useAppDispatch, useAppSelector } from "../../rtk/app/hooks";
+import { switchAutoSave, switchDevMode } from "../../rtk/features";
+import { ModeToggle } from "../ModeToggle";
+
 export const SiteHeader = () => {
+  const { autoSave, devMode } = useAppSelector((state) => state.editor);
+  const dispatch = useAppDispatch();
   return (
     <header className="sticky top-0 z-50 w-full border-b px-4 py-3 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
@@ -23,15 +29,28 @@ export const SiteHeader = () => {
           </Link>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Dev Mode</span>
-            <Switch />
+            <Switch
+              checked={devMode}
+              onCheckedChange={() => {
+                dispatch(switchDevMode());
+              }}
+            />
           </div>
 
           {/* Auto Save Toggle */}
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Auto Save</span>
-            <Switch />
+            <Switch
+              checked={autoSave}
+              onCheckedChange={() => {
+                dispatch(switchAutoSave());
+              }}
+            />
           </div>
 
+          <div className="flex items-center gap-2">
+            <ModeToggle />
+          </div>
           <div className="flex gap-2">
             <Button
               variant="secondary"
@@ -45,7 +64,6 @@ export const SiteHeader = () => {
               <UploadCloud className="mr-1 h-4 w-4" /> Publish
             </Button>
           </div>
-
           {/* Avatar */}
           <Avatar>
             <AvatarImage src="/avatar.png" alt="User" />

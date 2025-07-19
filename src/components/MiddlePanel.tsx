@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/co
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { FormSchema } from "../app/page";
+import { useAppSelector } from "../rtk/app/hooks";
 import { DropZone } from "./DropArea";
 import { FormInTheMiddle } from "./FormInTheMiddle";
 
@@ -19,7 +19,9 @@ export const handleKey = (e: React.KeyboardEvent, callback: () => void) => {
   }
 };
 
-export const MiddlePanel = ({ schema }: { schema: FormSchema }) => {
+export const MiddlePanel = () => {
+  const { formDefinition, activeStep } = useAppSelector((state) => state.editor);
+
   return (
     <div className="flex w-full flex-col overflow-y-auto" style={{ height: "calc(100vh - 88px)" }}>
       <div className="flex w-full">
@@ -27,11 +29,13 @@ export const MiddlePanel = ({ schema }: { schema: FormSchema }) => {
           <Card className="gap-0 pt-4 pb-0">
             <CardHeader>
               <CardDescription>
-                <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">Steps</h2>
+                <h2 className="scroll-m-20 pb-2 text-3xl font-semibold first:mt-0">Steps</h2>
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-2 px-0">
-              <div className="border-border dark:border-border/40 w-full border-b bg-[#5e10b1] px-6 py-3">1 - Step-0</div>
+              <div className="border-border dark:border-border/40 w-full border-b bg-[#5a287d] px-6 py-3 text-white">
+                1 - Step-0
+              </div>
               <div className="border-border dark:border-border/40 w-full border-b px-6 py-3">2 - Step-2</div>
               <div className="border-border dark:border-border/40 w-full border-b px-6 py-3">3 - Step-3</div>
               <div className="border-border dark:border-border/40 w-full border-b px-6 py-3">4 - Step-4</div>
@@ -45,8 +49,8 @@ export const MiddlePanel = ({ schema }: { schema: FormSchema }) => {
               <DropZone />
             </div>
             <CardContent className="grid gap-6">
-              <FormInTheMiddle dataSchema={schema.dataSchema} uiSchema={schema.uiSchema} />
-              {schema.dataSchema.properties && Object.keys(schema.dataSchema.properties).length === 0 && (
+              {formDefinition.stepDefinitions[activeStep].schema.properties &&
+              Object.keys(formDefinition.stepDefinitions[activeStep].schema.properties).length === 0 ? (
                 <>
                   <div className="grid w-full items-start gap-4" id="error_container">
                     <Alert variant="destructive">
@@ -112,6 +116,11 @@ export const MiddlePanel = ({ schema }: { schema: FormSchema }) => {
                     <Input id="address" />
                   </div>
                 </>
+              ) : (
+                <FormInTheMiddle
+                  dataSchema={formDefinition.stepDefinitions[activeStep].schema}
+                  uiSchema={formDefinition.stepDefinitions[activeStep].uiSchema}
+                />
               )}
             </CardContent>
             <CardFooter className="w-full">
