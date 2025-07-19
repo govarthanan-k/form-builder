@@ -18,10 +18,7 @@ export const SiteHeader = () => {
         </Link>
 
         <div className="flex items-center gap-6 space-x-4">
-          <Link
-            href="/forms"
-            className="rounded px-3 py-1 text-sm font-medium transition-colors"
-          >
+          <Link href="/forms" className="rounded px-3 py-1 text-sm font-medium transition-colors">
             Forms
           </Link>
           <div className="flex items-center gap-2">
@@ -44,11 +41,7 @@ export const SiteHeader = () => {
             >
               <Save className="mr-1 h-4 w-4" /> Save
             </Button>
-            <Button
-              size="sm"
-              onClick={() => alert("Published!")}
-              className="bg-blue-600 text-white hover:bg-blue-700"
-            >
+            <Button size="sm" onClick={() => alert("Published!")} className="bg-blue-600 text-white hover:bg-blue-700">
               <UploadCloud className="mr-1 h-4 w-4" /> Publish
             </Button>
           </div>

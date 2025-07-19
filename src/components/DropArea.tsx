@@ -1,3 +1,5 @@
+"use client";
+
 import { useDroppable } from "@dnd-kit/core";
 import { CirclePlus } from "lucide-react";
 
@@ -10,9 +12,7 @@ export function DropZone() {
     <div
       ref={setNodeRef}
       className={`relative flex h-20 w-full items-center justify-center rounded-xl border-2 transition-colors ${
-        isOver
-          ? "border-blue-500 bg-blue-50 dark:bg-blue-950"
-          : "border-dashed border-blue-500"
+        isOver ? "border-blue-500 bg-blue-50 dark:bg-blue-950" : "border-dashed border-blue-500"
       }`}
     >
       {isOver ? (
