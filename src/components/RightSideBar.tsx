@@ -1,27 +1,21 @@
+"use client";
+
 import { AlertCircleIcon, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { FormSchema } from "../app/page";
 import { JsonEditor } from "./JsonEditor";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
-export const RightSideBar = ({ schema }: { schema: object }) => {
+export const RightSideBar = ({ schema }: { schema: FormSchema }) => {
   return (
-    <div
-      className="w-full overflow-y-auto"
-      style={{ height: "calc(100vh - 88px)" }}
-    >
+    <div className="w-full overflow-y-auto" style={{ height: "calc(100vh - 88px)" }}>
       <Tabs defaultValue="Inspect" className="w-full">
         <TabsList className="flex w-full">
           <TabsTrigger
@@ -62,10 +56,7 @@ export const RightSideBar = ({ schema }: { schema: object }) => {
               <CardTitle>Editing Properties of First Name</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-6">
-              <div
-                className="grid w-full items-start gap-4"
-                id="error_container"
-              >
+              <div className="grid w-full items-start gap-4" id="error_container">
                 <Alert variant="destructive">
                   <AlertCircleIcon />
                   <AlertTitle>Unable to process your payment.</AlertTitle>
@@ -105,17 +96,11 @@ export const RightSideBar = ({ schema }: { schema: object }) => {
             </CardContent>
             <CardFooter className="w-full">
               <div className="flex w-full gap-2">
-                <Button
-                  variant="outline"
-                  className="w-1/2 rounded-md px-4 py-2"
-                >
+                <Button variant="outline" className="w-1/2 rounded-md px-4 py-2">
                   <RotateCcw />
                   Reset Field
                 </Button>
-                <Button
-                  variant="destructive"
-                  className="w-1/2 rounded-md px-4 py-2"
-                >
+                <Button variant="destructive" className="w-1/2 rounded-md px-4 py-2">
                   <Trash2 /> Delete Field
                 </Button>
               </div>
@@ -125,14 +110,14 @@ export const RightSideBar = ({ schema }: { schema: object }) => {
         <TabsContent value="Data Schema">
           <Card>
             <CardContent className="grid gap-6">
-              <JsonEditor value={schema} />
+              <JsonEditor value={schema.dataSchema} />
             </CardContent>
           </Card>
         </TabsContent>
         <TabsContent value="UI Schema">
           <Card>
             <CardContent className="grid gap-6">
-              <JsonEditor />
+              <JsonEditor value={schema.uiSchema} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -146,13 +131,9 @@ export const RightSideBar = ({ schema }: { schema: object }) => {
         <TabsContent value="Rules">
           <Card>
             <CardContent className="grid gap-6">
-              <h2 className="text-lg font-semibold text-slate-100">
-                Step Rules
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-100">Step Rules</h2>
               <JsonEditor height="35vh" />
-              <h2 className="text-lg font-semibold text-slate-100">
-                Form Rules
-              </h2>
+              <h2 className="text-lg font-semibold text-slate-100">Form Rules</h2>
               <JsonEditor height="35vh" />
             </CardContent>
           </Card>
