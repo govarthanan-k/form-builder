@@ -2,13 +2,7 @@
 
 import Editor from "@monaco-editor/react";
 
-export const JsonEditor = ({
-  height = "80.75vh",
-  value,
-}: {
-  height?: string;
-  value?: object;
-}) => {
+export const JsonEditor = ({ height = "80.75vh", value }: { height?: string; value?: object }) => {
   const json = {
     name: "Gova",
     active: true,

@@ -44,16 +44,9 @@ export function TagInput() {
       {/* Tags below the input */}
       <div className="mt-2 flex flex-wrap gap-2">
         {tags.map((tag, i) => (
-          <span
-            key={i}
-            className="flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1 text-sm text-white"
-          >
+          <span key={i} className="flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1 text-sm text-white">
             {tag}
-            <button
-              onClick={() => removeTag(i)}
-              className="text-white hover:text-red-300"
-              type="button"
-            >
+            <button onClick={() => removeTag(i)} className="text-white hover:text-red-300" type="button">
               <X className="h-4 w-4" />
             </button>
           </span>

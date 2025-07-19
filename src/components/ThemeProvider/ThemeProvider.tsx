@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  ThemeProvider as NextThemesProvider,
-  ThemeProviderProps,
-} from "next-themes";
+import { ThemeProvider as NextThemesProvider, ThemeProviderProps } from "next-themes";
 
 export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   const [mounted, setMounted] = useState(false);
