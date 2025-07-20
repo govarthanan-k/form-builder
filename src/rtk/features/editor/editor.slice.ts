@@ -79,6 +79,8 @@ const mapFormDataToFieldSchemas = ({
   let fieldUiSchema: UiSchema = formDefinition.stepDefinitions[activeStep].uiSchema[fieldName];
   let newRequiredFields = [...(formDefinition.stepDefinitions[activeStep].schema.required || [])];
 
+  const isFieldRenamed = (formData as { fieldName: string }).fieldName !== fieldName;
+
   const fieldType: FieldType = fieldUiSchema["ui:options"]?.fieldType;
 
   if (fieldType) {
@@ -91,10 +93,12 @@ const mapFormDataToFieldSchemas = ({
       if (fieldsOfUiOptions?.includes(key)) {
         newUiOptions[key] = value;
       } else if (key === "required") {
-        if (value && !newRequiredFields.includes(fieldName)) {
-          newRequiredFields.push(fieldName);
-        } else if (!value && newRequiredFields.includes(fieldName)) {
-          newRequiredFields = newRequiredFields.filter((reqFieldName) => reqFieldName !== fieldName);
+        {
+          if (value && !newRequiredFields.includes(fieldName)) {
+            newRequiredFields.push(fieldName);
+          } else if (!value && newRequiredFields.includes(fieldName)) {
+            newRequiredFields = newRequiredFields.filter((reqFieldName) => reqFieldName !== fieldName);
+          }
         }
       } else if (!["fieldName"].includes(key)) {
         newSchemaProps[key] = value;
@@ -111,6 +115,22 @@ const mapFormDataToFieldSchemas = ({
     fieldSchema = {
       ...newSchemaProps,
     };
+  }
+
+  if (isFieldRenamed) {
+    // Replace old field name with new field name in `required` array
+    const requiredFieldIndex = newRequiredFields.indexOf(fieldName);
+    if (requiredFieldIndex !== -1) {
+      newRequiredFields[requiredFieldIndex] = (formData as { fieldName: string }).fieldName;
+    }
+    // Replace old field name with new field name in `ui:order` array
+    const uiOrderFieldIndex = formDefinition.stepDefinitions[activeStep].uiSchema["ui:order"]?.indexOf(fieldName);
+    if (uiOrderFieldIndex !== undefined && uiOrderFieldIndex !== -1) {
+      // @ts-expect-error: For some reason, even though we do undefined check, ts compiler shows error
+      formDefinition.stepDefinitions[activeStep].uiSchema["ui:order"][uiOrderFieldIndex] = (
+        formData as { fieldName: string }
+      ).fieldName;
+    }
   }
   return { schema: fieldSchema, uiSchema: fieldUiSchema, requiredFields: newRequiredFields };
 };
@@ -193,12 +213,25 @@ const editorSlice = createSlice({
             formDefinition: state.formDefinition,
           });
 
+          const isFieldRenamed =
+            (state.selectedFieldPropertiesFormData as { fieldName: string }).fieldName !== state.selectedField;
+
+          const newFieldName = isFieldRenamed
+            ? (state.selectedFieldPropertiesFormData as { fieldName: string }).fieldName
+            : state.selectedField;
+
           if (state.formDefinition.stepDefinitions[state.activeStep].schema.properties) {
+            if (isFieldRenamed) {
+              // @ts-expect-error: For some reason, even though we do undefined check, ts compiler shows error
+              delete state.formDefinition.stepDefinitions[state.activeStep].schema.properties[state.selectedField];
+              delete state.formDefinition.stepDefinitions[state.activeStep].uiSchema[state.selectedField];
+              state.selectedField = newFieldName;
+            }
             // @ts-expect-error: For some reason, even though we do undefined check, ts compiler shows error
-            state.formDefinition.stepDefinitions[state.activeStep].schema.properties[state.selectedField] = { ...newSchema };
+            state.formDefinition.stepDefinitions[state.activeStep].schema.properties[newFieldName] = { ...newSchema };
           }
           state.formDefinition.stepDefinitions[state.activeStep].schema.required = [...newRequiredFields];
-          state.formDefinition.stepDefinitions[state.activeStep].uiSchema[state.selectedField] = { ...newUiSchema };
+          state.formDefinition.stepDefinitions[state.activeStep].uiSchema[newFieldName] = { ...newUiSchema };
         }
       }
     ),
