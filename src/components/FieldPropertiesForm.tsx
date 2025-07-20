@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { IChangeEvent } from "@rjsf/core";
 import Form from "@rjsf/shadcn";
+import { RJSFValidationError } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 
 import { descriptors, PropertiesConfiguration } from "../rjsf/descriptors";
@@ -19,6 +20,18 @@ interface GetPropertiesSchemaArgs {
   activeStep: number;
   selectedField: string | undefined;
 }
+
+export const transformErrors = (errors: RJSFValidationError[]) =>
+  errors.map((error) => {
+    if (error.name === "required" && error.params?.missingProperty) {
+      return {
+        ...error,
+        message: "Please enter a value", // Shown under field
+        fieldErrorMessage: `Please enter a value in ${humanizeFieldName(error.params.missingProperty)}`, // Used in error list
+      };
+    }
+    return error;
+  });
 
 export const getPropertiesSchema = ({
   formDefinition,
@@ -91,18 +104,7 @@ export const FieldPropertiesForm = () => {
       idSeparator="."
       idPrefix={PROPERTIES_ROOT_EFORM_ID_PREFIX}
       className="flex flex-col gap-5"
-      transformErrors={(errors) =>
-        errors.map((error) => {
-          if (error.name === "required" && error.params?.missingProperty) {
-            return {
-              ...error,
-              message: "Please enter a value", // Shown under field
-              fieldErrorMessage: `Please enter a value in ${humanizeFieldName(error.params.missingProperty)}`, // Used in error list
-            };
-          }
-          return error;
-        })
-      }
+      transformErrors={transformErrors}
     >
       <></>
     </Form>

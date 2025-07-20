@@ -84,7 +84,7 @@ export const SiteHeader = () => {
           {/* Avatar */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer">
+              <Avatar className="cursor-pointer border border-gray-300 dark:border-gray-600">
                 <AvatarImage src="/avatar.png" alt="User" />
                 <AvatarFallback>JD</AvatarFallback>
               </Avatar>

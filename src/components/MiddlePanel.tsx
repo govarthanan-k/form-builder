@@ -1,12 +1,9 @@
 "use client";
 
-import { AlertCircleIcon, ArrowRight, Settings, Trash2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import { useAppSelector } from "../rtk/app/hooks";
 import { DropZone } from "./DropArea";
@@ -34,11 +31,11 @@ export const MiddlePanel = () => {
             </CardHeader>
             <CardContent className="flex flex-col gap-2 px-0">
               <div className="border-border dark:border-border/40 w-full border-b bg-[#5a287d] px-6 py-3 text-white">
-                1 - Step-0
+                1 - Step-1
               </div>
               <div className="border-border dark:border-border/40 w-full border-b px-6 py-3">2 - Step-2</div>
-              <div className="border-border dark:border-border/40 w-full border-b px-6 py-3">3 - Step-3</div>
-              <div className="border-border dark:border-border/40 w-full border-b px-6 py-3">4 - Step-4</div>
+              <div className="border-border dark:border-border/40 w-full border-b px-6 py-3">3 - Summary</div>
+              <div className="border-border dark:border-border/40 w-full border-b px-6 py-3">4 - Thank You Page </div>
             </CardContent>
           </Card>
         </div>
@@ -49,79 +46,10 @@ export const MiddlePanel = () => {
               <DropZone />
             </div>
             <CardContent className="grid gap-6">
-              {formDefinition.stepDefinitions[activeStep].schema.properties &&
-              Object.keys(formDefinition.stepDefinitions[activeStep].schema.properties).length === 0 ? (
-                <>
-                  <div className="grid w-full items-start gap-4" id="error_container">
-                    <Alert variant="destructive">
-                      <AlertCircleIcon />
-                      <AlertTitle>Unable to process your payment.</AlertTitle>
-                      <AlertDescription>
-                        <p>Please verify your billing information and try again.</p>
-                        <ul className="list-inside list-disc text-sm">
-                          <li>Check your card details</li>
-                          <li>Ensure sufficient funds</li>
-                          <li>Verify billing address</li>
-                        </ul>
-                      </AlertDescription>
-                    </Alert>
-                  </div>
-                  <div
-                    className="group relative grid gap-3 rounded-md border border-blue-500 p-4 px-4 pt-6 pb-4 transition-colors"
-                    id="field"
-                  >
-                    <div className="text-muted-foreground dark:text-muted absolute top-1.5 right-1.5 flex gap-x-2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                      {/* Delete icon */}
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        aria-label="Delete field"
-                        className="focus:ring-ring h-4 w-4 cursor-pointer rounded-sm outline-none focus:ring-2 focus:ring-offset-2"
-                        onClick={() => alert("Delete this field")}
-                        onKeyDown={(e) => handleKey(e, () => alert("Delete this field"))}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </div>
-
-                      {/* Settings icon */}
-                      <div
-                        role="button"
-                        tabIndex={0}
-                        aria-label="Open field settings"
-                        className="focus:ring-ring h-4 w-4 cursor-pointer rounded-sm outline-none focus:ring-2 focus:ring-offset-2"
-                        onClick={() => alert("Edit this field")}
-                        onKeyDown={(e) => handleKey(e, () => alert("Edit this field"))}
-                      >
-                        <Settings className="h-4 w-4" />
-                      </div>
-                    </div>
-
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" defaultValue="Govarthanan" />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" defaultValue="K" />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" defaultValue="govarthanan@live.com" />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="mobile">Mobile Number</Label>
-                    <Input id="mobile" />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="address">Address</Label>
-                    <Input id="address" />
-                  </div>
-                </>
-              ) : (
-                <FormInTheMiddle
-                  dataSchema={formDefinition.stepDefinitions[activeStep].schema}
-                  uiSchema={formDefinition.stepDefinitions[activeStep].uiSchema}
-                />
-              )}
+              <FormInTheMiddle
+                dataSchema={formDefinition.stepDefinitions[activeStep].schema}
+                uiSchema={formDefinition.stepDefinitions[activeStep].uiSchema}
+              />
             </CardContent>
             <CardFooter className="w-full">
               <div className="mt-6 flex w-full items-center justify-between">

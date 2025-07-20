@@ -15,7 +15,7 @@ export const inputFieldDescriptor: Descriptor = {
   propertiesConfiguration: {
     dataSchema: {
       type: "object",
-      required: ["fieldName", "label"],
+      required: ["fieldName", "title"],
       properties: {
         fieldName: {
           type: "string",

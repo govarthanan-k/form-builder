@@ -77,6 +77,8 @@ const editorSlice = createSlice({
       existingFields[newFieldName] = { ...dataSchema };
       step.uiSchema[newFieldName] = { ...uiSchema };
       step.uiSchema["ui:order"] = [...(step.uiSchema["ui:order"] ?? []), newFieldName];
+      // Todo - Remove this later
+      step.schema.required = [...(step.schema.required || []), newFieldName];
     }),
     updateField: create.reducer((state, action: PayloadAction<{ schema: JSONSchema7; uiSchema: UiSchema }>) => {
       // state.activeTabInRightPanel = action.payload.activeTabInRightPanel;
@@ -99,6 +101,10 @@ const editorSlice = createSlice({
       state.formDefinition.stepDefinitions[state.activeStep].uiSchema["ui:order"] = state.formDefinition.stepDefinitions[
         state.activeStep
       ].uiSchema["ui:order"]?.filter((value) => value !== fieldId);
+
+      state.formDefinition.stepDefinitions[state.activeStep].schema.required = state.formDefinition.stepDefinitions[
+        state.activeStep
+      ].schema.required?.filter((value) => value !== fieldId);
     }),
     updateFormData: create.reducer((state, action: PayloadAction<{ formData: FormData }>) => {
       state.formData = { ...action.payload.formData };
