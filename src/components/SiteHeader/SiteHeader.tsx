@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 
 import { useAppDispatch, useAppSelector } from "../../rtk/app/hooks";
 import { switchAutoSave, switchDevMode } from "../../rtk/features";
-import { ModeToggle } from "../ModeToggle";
+import { ThemeToggle } from "../ThemeToggle";
 
 export const SiteHeader = () => {
   const { autoSave, devMode } = useAppSelector((state) => state.editor);
@@ -49,7 +49,7 @@ export const SiteHeader = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <ModeToggle />
+            <ThemeToggle oneClickSwitch />
           </div>
           <div className="flex gap-2">
             <Button
