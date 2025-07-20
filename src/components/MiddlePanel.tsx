@@ -3,8 +3,9 @@
 import { ArrowRight, Plus, SquarePen, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { cn } from "../lib/utils";
 import { useAppDispatch, useAppSelector } from "../rtk/app/hooks";
@@ -30,33 +31,33 @@ export const MiddlePanel = () => {
       <div className="flex w-full">
         <div className="middle-panel-steps m-5 w-1/5">
           <Card className="gap-0 pt-4 pb-0">
-            <CardHeader>
-              <CardDescription>
-                <div className="flex justify-between gap-2">
-                  <h2 className="scroll-m-20 pb-2 text-3xl font-semibold first:mt-0">Steps</h2>
-                  <div className="flex cursor-pointer items-center justify-center">
-                    <Plus
-                      className="h-4 w-4"
-                      onClick={() => {
-                        dispatch(updateAddStepModalOpen({ isOpen: true }));
-                      }}
-                    />
-
-                    <Dialog open={isAddStepModalOpen} onOpenChange={(isOpen) => dispatch(updateAddStepModalOpen({ isOpen }))}>
-                      <DialogContent className="sm:max-w-[500px]">
-                        <DialogHeader>
-                          <DialogTitle>Add New Step</DialogTitle>
-                          <DialogDescription>
-                            Please fill in the new step details and click &apos;Add&apos; to confirm.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <AddStepForm />
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </div>
-              </CardDescription>
+            <CardHeader className="border-border border-b !pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-3xl font-semibold">Steps</CardTitle>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button size="icon" variant="ghost" onClick={() => dispatch(updateAddStepModalOpen({ isOpen: true }))}>
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Add Step</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <Dialog open={isAddStepModalOpen} onOpenChange={(isOpen) => dispatch(updateAddStepModalOpen({ isOpen }))}>
+                <DialogContent className="sm:max-w-[500px]">
+                  <DialogHeader>
+                    <DialogTitle>Add New Step</DialogTitle>
+                    <DialogDescription>
+                      Please fill in the new step details and click &apos;Add&apos; to confirm.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <AddStepForm />
+                </DialogContent>
+              </Dialog>
             </CardHeader>
+
             <CardContent className="flex flex-col px-0">
               {formDefinition.stepDefinitions.map((stepDefinition, index) => {
                 return (

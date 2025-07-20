@@ -10,6 +10,7 @@ import { updateActiveTabInRightPanel } from "../rtk/features";
 import { FormDefinition, RightPanelTab } from "../rtk/features/editor/editor.types";
 import { FieldPropertiesForm } from "./FieldPropertiesForm";
 import { JsonEditor } from "./JsonEditor";
+import { StepProperties } from "./StepProperties";
 
 const getFieldNameFromFieldId = ({
   fieldName,
@@ -77,20 +78,20 @@ export const RightSideBar = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="Inspect">
-          <Card>
-            <CardHeader>
-              {selectedField ? (
+          {selectedField ? (
+            <Card>
+              <CardHeader>
                 <CardTitle>
                   Field Properties of {getFieldNameFromFieldId({ fieldName: selectedField, formDefinition, activeStep })}
                 </CardTitle>
-              ) : (
-                <CardTitle>Form Properties</CardTitle>
-              )}
-            </CardHeader>
-            <CardContent className="grid gap-6">
-              <FieldPropertiesForm />
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent className="grid gap-6">
+                <FieldPropertiesForm />
+              </CardContent>
+            </Card>
+          ) : (
+            <StepProperties />
+          )}
         </TabsContent>
         <TabsContent value="Data Schema">
           <Card>

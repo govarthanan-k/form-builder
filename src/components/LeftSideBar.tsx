@@ -1,6 +1,7 @@
 "use client";
 
-import { ChevronDown, SquareCheck, Type } from "lucide-react";
+import { ReactNode } from "react";
+import { ChevronDown, ShieldCheck, ShieldOff, SquareCheck, Type } from "lucide-react";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -29,10 +30,30 @@ export const LeftSideBar = () => {
           <AccordionContent className="bg-muted space-y-3 rounded-md p-4">
             <Field label="Form Type" value="Stepped Navigation" />
             <Field label="Status" value="Draft" />
-            <Field label="Authenticated" value="No" />
+            <Field
+              label="Authenticated"
+              value={
+                <span className="flex items-center gap-1">
+                  No
+                  <ShieldOff className="h-4 w-4" color="red" />
+                </span>
+              }
+            />
+            <Field
+              label="Authenticated"
+              value={
+                <span className="flex items-center gap-1">
+                  Yes
+                  <ShieldCheck className="h-4 w-4" color="green" />
+                </span>
+              }
+            />
             <Field label="MFA" value="No" />
+            <Field label="Created by" value="Govarthanan K" />
+            <Field label="Created at" value="2024-01-01 12:00:00" />
             <Field label="Last modified by" value="John Doe" />
             <Field label="Last modified at" value="2025-01-01 12:00:00" />
+            <Field label="Version" value="254" />
           </AccordionContent>
         </AccordionItem>
 
@@ -73,7 +94,7 @@ export const LeftSideBar = () => {
         <AccordionItem value="item-4">
           <AccordionTrigger className="text-base font-semibold">4. Access Permissions</AccordionTrigger>
           <AccordionContent className="bg-muted space-y-3 rounded-md p-4">
-            <TagInput />
+            <TagInput noTagsMessage="No AD groups added yet" />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -81,7 +102,12 @@ export const LeftSideBar = () => {
   );
 };
 
-const Field = ({ label, value }: { label: string; value: string }) => (
+interface FieldProps {
+  label: string;
+  value: ReactNode; // allows string, icon, JSX, etc.
+}
+
+const Field = ({ label, value }: FieldProps) => (
   <div className="flex flex-col">
     <span className="text-muted-foreground text-sm">{label}</span>
     <span className="text-sm font-medium">{value}</span>

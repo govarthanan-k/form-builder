@@ -5,16 +5,30 @@ import { X } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 
-export function TagInput() {
-  const [tags, setTags] = useState<string[]>([]);
+export interface TagInputProps {
+  tags?: string[];
+  noTagsMessage?: string;
+}
+
+export function TagInput({ tags: initialTags = [], noTagsMessage = "No tags added yet." }: TagInputProps) {
+  const [tags, setTags] = useState<string[]>(initialTags);
   const [inputValue, setInputValue] = useState("");
+  const [duplicateError, setDuplicateError] = useState(false);
+  const [liveValidate, setLiveValidate] = useState(false);
 
   const addTag = (value: string) => {
     const tag = value.trim();
-    if (tag && !tags.includes(tag)) {
+    if (!tag) return;
+
+    if (tags.includes(tag)) {
+      setDuplicateError(true);
+      setLiveValidate(true);
+    } else {
       setTags([...tags, tag]);
+      setInputValue("");
+      setDuplicateError(false);
+      setLiveValidate(false);
     }
-    setInputValue("");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -30,27 +44,40 @@ export function TagInput() {
     setTags(updated);
   };
 
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+
+    if (liveValidate) {
+      const isDuplicate = tags.includes(value.trim());
+      setDuplicateError(isDuplicate);
+    }
+  };
+
   return (
     <div className="w-full max-w-md">
-      {/* Input field */}
       <Input
         value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
+        onChange={(e) => handleInputChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Type a valid AD group and press Enter"
-        className="dark:bg-zinc-900"
+        className={`dark:bg-zinc-900 ${duplicateError ? "border-red-500" : ""}`}
       />
 
-      {/* Tags below the input */}
-      <div className="mt-2 flex flex-wrap gap-2">
-        {tags.map((tag, i) => (
-          <span key={i} className="flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1 text-sm text-white">
-            {tag}
-            <button onClick={() => removeTag(i)} className="text-white hover:text-red-300" type="button">
-              <X className="h-4 w-4" />
-            </button>
-          </span>
-        ))}
+      {duplicateError && <p className="mt-1 text-sm text-red-500">This tag already exists.</p>}
+
+      <div className="mt-2 flex min-h-[2rem] flex-wrap gap-2">
+        {tags.length === 0 ? (
+          <p className="text-muted-foreground text-sm italic">{noTagsMessage}</p>
+        ) : (
+          tags.map((tag, i) => (
+            <span key={i} className="flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1 text-sm text-white">
+              {tag}
+              <button onClick={() => removeTag(i)} className="text-white hover:text-red-300" type="button">
+                <X className="h-4 w-4" />
+              </button>
+            </span>
+          ))
+        )}
       </div>
     </div>
   );
