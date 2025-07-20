@@ -5,6 +5,10 @@ import { AlertCircleIcon } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
+export interface CutomValidationError extends RJSFValidationError {
+  fieldErrorMessage?: string;
+}
+
 export const ErrorListTemplate = (props: ErrorListProps) => {
   const { errors } = props;
   return (
@@ -14,10 +18,10 @@ export const ErrorListTemplate = (props: ErrorListProps) => {
         <AlertTitle>Errors</AlertTitle>
         <AlertDescription>
           <ul className="list-inside list-disc text-sm">
-            {errors.map((error: RJSFValidationError, i: number) => {
+            {errors.map((error: CutomValidationError, i: number) => {
               return (
                 <li key={i} className="error">
-                  {error.stack}
+                  {error.fieldErrorMessage || error.message}
                 </li>
               );
             })}

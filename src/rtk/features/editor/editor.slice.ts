@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UiSchema } from "@rjsf/utils";
 import { JSONSchema7, JSONSchema7Definition } from "json-schema";
 
+import { ROOT_EFORM_ID_PREFIX } from "../../../components/FormInTheMiddle";
 import { FieldType } from "../../../components/LeftSideBar";
 import { descriptors } from "../../../rjsf/descriptors";
 import { EditorState, FormData, RightPanelTab, StepDefinition } from "./editor.types";
@@ -13,6 +14,8 @@ export const EMPTY_STEP_DEFINITION: StepDefinition = {
 
 const initialState: EditorState = {
   activeStep: 0,
+  autoSave: false,
+  devMode: true,
   formDefinition: {
     stepDefinitions: [{ ...EMPTY_STEP_DEFINITION }],
   },
@@ -41,9 +44,16 @@ const editorSlice = createSlice({
   reducers: (create) => ({
     updateSelectedField: create.reducer((state, action: PayloadAction<{ selectedField: string }>) => {
       let { selectedField } = action.payload;
-      selectedField = selectedField.startsWith("eform_root.") ? selectedField.slice("eform_root.".length) : selectedField;
+      selectedField = selectedField.startsWith(`${ROOT_EFORM_ID_PREFIX}.`)
+        ? selectedField.slice(`${ROOT_EFORM_ID_PREFIX}.`.length)
+        : selectedField;
       state.selectedField = selectedField;
       state.activeTabInRightPanel = "Inspect";
+      state.selectedFieldPropertiesFormData = {
+        // Todo - Replace this with some mapping/reverse mapping function
+        ...(state.formDefinition.stepDefinitions[state.activeStep].schema.properties?.[selectedField] as JSONSchema7),
+        fieldName: selectedField,
+      } as FormData;
     }),
     switchDevMode: create.reducer((state) => {
       state.devMode = !state.devMode;
@@ -80,8 +90,7 @@ const editorSlice = createSlice({
     }),
     deleteField: create.reducer((state, action: PayloadAction<{ fieldId: string }>) => {
       let { fieldId } = action.payload;
-      console.log("Deleting ", fieldId);
-      fieldId = fieldId.startsWith("eform_root.") ? fieldId.slice("eform_root.".length) : fieldId;
+      fieldId = fieldId.startsWith(`${ROOT_EFORM_ID_PREFIX}.`) ? fieldId.slice(`${ROOT_EFORM_ID_PREFIX}.`.length) : fieldId;
       if (state.formDefinition.stepDefinitions[state.activeStep].schema.properties) {
         // @ts-expect-error: For some reason, even though we do undefined check, ts compiler shows error
         delete state.formDefinition.stepDefinitions[state.activeStep].schema.properties[fieldId];
@@ -94,10 +103,14 @@ const editorSlice = createSlice({
     updateFormData: create.reducer((state, action: PayloadAction<{ formData: FormData }>) => {
       state.formData = { ...action.payload.formData };
     }),
+    updateSelectedFieldPropertiesFormData: create.reducer((state, action: PayloadAction<{ formData: FormData }>) => {
+      state.selectedFieldPropertiesFormData = { ...action.payload.formData };
+    }),
   }),
 });
 
 export const {
+  updateSelectedFieldPropertiesFormData,
   updateFormData,
   deleteField,
   addField,

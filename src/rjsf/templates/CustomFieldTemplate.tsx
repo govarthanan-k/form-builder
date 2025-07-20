@@ -6,6 +6,7 @@ import { getDefaultRegistry } from "@rjsf/core";
 import { FieldTemplateProps } from "@rjsf/utils";
 import { Settings, Trash2 } from "lucide-react";
 
+import { ROOT_EFORM_ID_PREFIX } from "../../components/FormInTheMiddle";
 import { handleKey } from "../../components/MiddlePanel";
 import { cn } from "../../lib/utils";
 import { useAppDispatch, useAppSelector } from "../../rtk/app/hooks";
@@ -17,13 +18,14 @@ export const CustomFieldTemplate = (props: FieldTemplateProps) => {
   const { selectedField } = useAppSelector((state) => state.editor);
 
   const dispatch = useAppDispatch();
-  console.log({ selectedField: `eforms_root.${selectedField}`, "props.id": props.id });
 
-  return props.id !== "eform_root" ? (
+  return props.id !== ROOT_EFORM_ID_PREFIX ? (
     <div
       className={cn(
         "group relative box-border grid gap-3 border p-4 px-4 pt-6 pb-4 transition-colors",
-        selectedField && `eforms_root.${selectedField}` === props.id ? "rounded-md border border-blue-500" : "border-transparent"
+        selectedField && `${ROOT_EFORM_ID_PREFIX}.${selectedField}` === props.id
+          ? "rounded-md border border-blue-500"
+          : "border-transparent"
       )}
     >
       <div className="text-muted-foreground dark:text-muted absolute top-2.5 right-2.5 flex gap-x-2">

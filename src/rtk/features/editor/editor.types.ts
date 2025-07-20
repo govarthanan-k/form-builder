@@ -17,10 +17,11 @@ export interface FormDefinition {
 
 export interface EditorState {
   selectedField?: string;
-  devMode?: boolean;
-  autoSave?: boolean;
+  devMode: boolean;
+  autoSave: boolean;
   activeTabInRightPanel?: RightPanelTab;
   activeStep: number;
   formDefinition: FormDefinition;
   formData: FormData;
+  selectedFieldPropertiesFormData?: FormData;
 }

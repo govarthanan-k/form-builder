@@ -9,6 +9,7 @@ export const dropdownFieldDescriptor: Descriptor = {
   uiSchema: {
     "ui:options": {
       help: "This is an help text",
+      fieldType: "dropdown",
     },
   },
   propertiesConfiguration: {
@@ -18,10 +19,18 @@ export const dropdownFieldDescriptor: Descriptor = {
       properties: {
         fieldName: {
           type: "string",
+          title: "Field Name",
         },
-        label: {
+        title: {
           type: "string",
+          title: "Field Label",
         },
+      },
+    },
+    uiSchema: {
+      fieldName: {
+        "ui:autofocus": true,
+        "ui:options": {},
       },
     },
   },

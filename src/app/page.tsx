@@ -17,7 +17,7 @@ export interface FormSchema {
   uiSchema: UiSchema;
 }
 
-export default function Dashboard() {
+export default function EFormDesigner() {
   const [isClient, setIsClient] = useState(false);
   const dispatch = useAppDispatch();
 

@@ -21,10 +21,16 @@ export const inputFieldDescriptor: Descriptor = {
           type: "string",
           title: "Field Name",
         },
-        label: {
+        title: {
           type: "string",
           title: "Field Label",
         },
+      },
+    },
+    uiSchema: {
+      fieldName: {
+        "ui:autofocus": true,
+        "ui:options": {},
       },
     },
   },

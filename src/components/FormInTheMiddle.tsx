@@ -10,6 +10,8 @@ import { ErrorListTemplate } from "../rjsf/templates/ErrorListTemplate";
 import { useAppDispatch, useAppSelector } from "../rtk/app/hooks";
 import { updateFormData } from "../rtk/features";
 
+export const ROOT_EFORM_ID_PREFIX = "eform_root";
+
 export const FormInTheMiddle = (props: FormSchema) => {
   const dispatch = useAppDispatch();
   const { formData } = useAppSelector((state) => state.editor);
@@ -34,7 +36,7 @@ export const FormInTheMiddle = (props: FormSchema) => {
         FieldTemplate: CustomFieldTemplate,
       }}
       idSeparator="."
-      idPrefix="eform_root"
+      idPrefix={ROOT_EFORM_ID_PREFIX}
     >
       <></>
     </Form>

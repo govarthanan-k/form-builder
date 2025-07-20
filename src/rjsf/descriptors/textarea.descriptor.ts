@@ -9,6 +9,7 @@ export const textareaFieldDescriptor: Descriptor = {
     "ui:widget": "textarea",
     "ui:options": {
       help: "This is an help text",
+      fieldType: "textarea",
     },
   },
   propertiesConfiguration: {
@@ -18,10 +19,18 @@ export const textareaFieldDescriptor: Descriptor = {
       properties: {
         fieldName: {
           type: "string",
+          title: "Field Name",
         },
-        label: {
+        title: {
           type: "string",
+          title: "Field Label",
         },
+      },
+    },
+    uiSchema: {
+      fieldName: {
+        "ui:autofocus": true,
+        "ui:options": {},
       },
     },
   },

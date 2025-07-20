@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "eForms Environment Dashboard",
+  title: "eForms - Designer",
   description: "Created and maintained by eForms COE team",
 };
 

@@ -8,6 +8,7 @@ export const checkboxFieldDescriptor: Descriptor = {
   uiSchema: {
     "ui:options": {
       help: "This is an help text",
+      fieldType: "checkbox",
     },
   },
   propertiesConfiguration: {
@@ -17,10 +18,18 @@ export const checkboxFieldDescriptor: Descriptor = {
       properties: {
         fieldName: {
           type: "string",
+          title: "Field Name",
         },
-        label: {
+        title: {
           type: "string",
+          title: "Field Label",
         },
+      },
+    },
+    uiSchema: {
+      fieldName: {
+        "ui:autofocus": true,
+        "ui:options": {},
       },
     },
   },

@@ -7,10 +7,15 @@ import { dropdownFieldDescriptor } from "./dropdown.descriptor";
 import { inputFieldDescriptor } from "./input.descriptor";
 import { textareaFieldDescriptor } from "./textarea.descriptor";
 
+export interface PropertiesConfiguration {
+  dataSchema: JSONSchema7;
+  uiSchema: UiSchema;
+}
+
 export interface Descriptor {
   dataSchema: JSONSchema7;
   uiSchema: UiSchema;
-  propertiesConfiguration: { dataSchema: JSONSchema7 };
+  propertiesConfiguration: PropertiesConfiguration;
 }
 
 export const descriptors: Record<FieldType, Descriptor> = {
