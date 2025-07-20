@@ -5,6 +5,7 @@ import { IChangeEvent } from "@rjsf/core";
 import Form from "@rjsf/shadcn";
 import { RJSFValidationError } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
+import { JSONSchema7 } from "json-schema";
 
 import { descriptors, PropertiesConfiguration } from "../rjsf/descriptors";
 import { ErrorListTemplate } from "../rjsf/templates/ErrorListTemplate";
@@ -21,13 +22,17 @@ interface GetPropertiesSchemaArgs {
   selectedField: string | undefined;
 }
 
-export const transformErrors = (errors: RJSFValidationError[]) =>
+export const transformErrors = (errors: RJSFValidationError[], schema: JSONSchema7) =>
   errors.map((error) => {
     if (error.name === "required" && error.params?.missingProperty) {
+      const { missingProperty } = error.params;
+
+      const fieldTitle = (schema.properties?.[missingProperty] as JSONSchema7)?.title ?? humanizeFieldName(missingProperty);
+
       return {
         ...error,
         message: "Please enter a value", // Shown under field
-        fieldErrorMessage: `Please enter a value in ${humanizeFieldName(error.params.missingProperty)}`, // Used in error list
+        fieldErrorMessage: `Please enter a value in ${fieldTitle}`, // Used in error list
       };
     }
     return error;
@@ -104,7 +109,9 @@ export const FieldPropertiesForm = () => {
       idSeparator="."
       idPrefix={PROPERTIES_ROOT_EFORM_ID_PREFIX}
       className="flex flex-col gap-5"
-      transformErrors={transformErrors}
+      transformErrors={(error) => {
+        return transformErrors(error, dataSchema);
+      }}
     >
       <></>
     </Form>

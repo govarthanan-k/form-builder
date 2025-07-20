@@ -7,7 +7,7 @@ export const checkboxFieldDescriptor: Descriptor = {
   },
   uiSchema: {
     "ui:options": {
-      help: "This is an help text",
+      description: "This is the field description",
       fieldType: "checkbox",
     },
   },
@@ -32,5 +32,6 @@ export const checkboxFieldDescriptor: Descriptor = {
         "ui:options": {},
       },
     },
+    fieldsOfUiOptions: ["fieldType", "description"],
   },
 };

@@ -38,7 +38,9 @@ export const FormInTheMiddle = (props: FormSchema) => {
       }}
       idSeparator="."
       idPrefix={ROOT_EFORM_ID_PREFIX}
-      transformErrors={transformErrors}
+      transformErrors={(error) => {
+        return transformErrors(error, props.dataSchema);
+      }}
     >
       <></>
     </Form>

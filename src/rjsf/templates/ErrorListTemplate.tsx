@@ -12,7 +12,7 @@ export interface CutomValidationError extends RJSFValidationError {
 export const ErrorListTemplate = (props: ErrorListProps) => {
   const { errors } = props;
   return (
-    <div className="grid w-full items-start gap-4" id="error_container">
+    <div className="mb-5 grid w-full items-start gap-4" id="error_container">
       <Alert variant="destructive">
         <AlertCircleIcon />
         <AlertTitle>Errors</AlertTitle>

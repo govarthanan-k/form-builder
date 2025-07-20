@@ -62,9 +62,9 @@ export const CustomFieldTemplate = (props: FieldTemplateProps) => {
         </div>
       </div>
 
-      <FieldTemplate {...props} />
+      <FieldTemplate {...props}>{props.uiSchema?.["ui:options"]?.hidden ? <></> : props.children}</FieldTemplate>
     </div>
   ) : (
-    <FieldTemplate {...props} />
+    <FieldTemplate {...props}>{props.uiSchema?.["ui:options"]?.hidden ? <></> : props.children}</FieldTemplate>
   );
 };

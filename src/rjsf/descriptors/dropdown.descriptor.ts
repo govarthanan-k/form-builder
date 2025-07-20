@@ -8,7 +8,7 @@ export const dropdownFieldDescriptor: Descriptor = {
   },
   uiSchema: {
     "ui:options": {
-      help: "This is an help text",
+      description: "This is the field description",
       fieldType: "dropdown",
     },
   },
@@ -33,5 +33,6 @@ export const dropdownFieldDescriptor: Descriptor = {
         "ui:options": {},
       },
     },
+    fieldsOfUiOptions: ["fieldType", "description"],
   },
 };

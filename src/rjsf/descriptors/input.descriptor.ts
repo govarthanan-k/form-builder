@@ -8,7 +8,7 @@ export const inputFieldDescriptor: Descriptor = {
   },
   uiSchema: {
     "ui:options": {
-      help: "This is an help text",
+      description: "This is the field description",
       fieldType: "input",
     },
   },
@@ -25,6 +25,15 @@ export const inputFieldDescriptor: Descriptor = {
           type: "string",
           title: "Field Label",
         },
+        description: {
+          type: "string",
+          title: "Description",
+        },
+        required: {
+          type: "boolean",
+          title: "Required?",
+        },
+        hidden: { type: "boolean", title: "Hidden?" },
       },
     },
     uiSchema: {
@@ -32,6 +41,19 @@ export const inputFieldDescriptor: Descriptor = {
         "ui:autofocus": true,
         "ui:options": {},
       },
+      title: {
+        "ui:options": {},
+      },
+      description: {
+        "ui:options": {},
+      },
+      required: {
+        "ui:options": {},
+      },
+      hidden: {
+        "ui:options": {},
+      },
     },
+    fieldsOfUiOptions: ["fieldType", "description", "hidden"],
   },
 };

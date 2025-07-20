@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UiSchema } from "@rjsf/utils";
+import { UIOptionsType, UiSchema } from "@rjsf/utils";
 import { JSONSchema7, JSONSchema7Definition } from "json-schema";
 
 import { ROOT_EFORM_ID_PREFIX } from "../../../components/FormInTheMiddle";
 import { FieldType } from "../../../components/LeftSideBar";
 import { descriptors } from "../../../rjsf/descriptors";
-import { EditorState, FormData, RightPanelTab, StepDefinition } from "./editor.types";
+import { EditorState, FormData, FormDefinition, RightPanelTab, StepDefinition } from "./editor.types";
 
 export const EMPTY_STEP_DEFINITION: StepDefinition = {
   schema: { type: "object", required: [], properties: {} },
@@ -38,6 +38,83 @@ export const generateUniqueFieldName = (
   return newName;
 };
 
+const mapFieldSchemasToFormData = ({
+  fieldName,
+  formDefinition,
+  activeStep,
+}: {
+  fieldName: string;
+  formDefinition: FormDefinition;
+  activeStep: number;
+}): FormData => {
+  const fieldUiSchema = formDefinition.stepDefinitions[activeStep].uiSchema[fieldName] as UiSchema;
+
+  const formData = {
+    ...(formDefinition.stepDefinitions[activeStep].schema.properties?.[fieldName] as JSONSchema7),
+    ...fieldUiSchema["ui:options"],
+    fieldName,
+    required: formDefinition.stepDefinitions[activeStep].schema.required?.includes(fieldName),
+    hidden:
+      fieldUiSchema["ui:widget"] === "hidden" ||
+      fieldUiSchema["ui:field"] === "hidden" ||
+      fieldUiSchema["ui:template"] === "hidden" ||
+      fieldUiSchema["ui:options"]?.hidden,
+  };
+
+  return formData as FormData;
+};
+
+const mapFormDataToFieldSchemas = ({
+  fieldName,
+  formData,
+  formDefinition,
+  activeStep,
+}: {
+  fieldName: string;
+  formData: FormData;
+  formDefinition: FormDefinition;
+  activeStep: number;
+}): { schema: JSONSchema7; uiSchema: UiSchema; requiredFields: string[] } => {
+  let fieldSchema: JSONSchema7 = formDefinition.stepDefinitions[activeStep].schema.properties?.[fieldName] as JSONSchema7;
+  let fieldUiSchema: UiSchema = formDefinition.stepDefinitions[activeStep].uiSchema[fieldName];
+  let newRequiredFields = [...(formDefinition.stepDefinitions[activeStep].schema.required || [])];
+
+  const fieldType: FieldType = fieldUiSchema["ui:options"]?.fieldType;
+
+  if (fieldType) {
+    const { fieldsOfUiOptions } = descriptors[fieldType].propertiesConfiguration;
+
+    const newUiOptions: UIOptionsType = {};
+    const newSchemaProps: Record<string, string> = {};
+
+    Object.entries(formData).forEach(([key, value]) => {
+      if (fieldsOfUiOptions?.includes(key)) {
+        newUiOptions[key] = value;
+      } else if (key === "required") {
+        if (value && !newRequiredFields.includes(fieldName)) {
+          newRequiredFields.push(fieldName);
+        } else if (!value && newRequiredFields.includes(fieldName)) {
+          newRequiredFields = newRequiredFields.filter((reqFieldName) => reqFieldName !== fieldName);
+        }
+      } else if (!["fieldName"].includes(key)) {
+        newSchemaProps[key] = value;
+      }
+    });
+
+    fieldUiSchema = {
+      ...fieldUiSchema,
+      "ui:options": {
+        ...newUiOptions,
+      },
+    };
+
+    fieldSchema = {
+      ...newSchemaProps,
+    };
+  }
+  return { schema: fieldSchema, uiSchema: fieldUiSchema, requiredFields: newRequiredFields };
+};
+
 const editorSlice = createSlice({
   name: "editor",
   initialState,
@@ -49,11 +126,11 @@ const editorSlice = createSlice({
         : selectedField;
       state.selectedField = selectedField;
       state.activeTabInRightPanel = "Inspect";
-      state.selectedFieldPropertiesFormData = {
-        // Todo - Replace this with some mapping/reverse mapping function
-        ...(state.formDefinition.stepDefinitions[state.activeStep].schema.properties?.[selectedField] as JSONSchema7),
+      state.selectedFieldPropertiesFormData = mapFieldSchemasToFormData({
+        activeStep: state.activeStep,
         fieldName: selectedField,
-      } as FormData;
+        formDefinition: state.formDefinition,
+      });
     }),
     switchDevMode: create.reducer((state) => {
       state.devMode = !state.devMode;
@@ -80,16 +157,7 @@ const editorSlice = createSlice({
       // Todo - Remove this later
       step.schema.required = [...(step.schema.required || []), newFieldName];
     }),
-    updateField: create.reducer((state, action: PayloadAction<{ schema: JSONSchema7; uiSchema: UiSchema }>) => {
-      // state.activeTabInRightPanel = action.payload.activeTabInRightPanel;
-      if (state.selectedField) {
-        if (state.formDefinition.stepDefinitions[state.activeStep].schema.properties) {
-          // @ts-expect-error: For some reason, even though we do undefined check, ts compiler shows error
-          state.formDefinition.stepDefinitions[state.activeStep].schema.properties[state.selectedField] = action.payload.schema;
-        }
-        state.formDefinition.stepDefinitions[state.activeStep].uiSchema[state.selectedField] = action.payload.uiSchema;
-      }
-    }),
+
     deleteField: create.reducer((state, action: PayloadAction<{ fieldId: string }>) => {
       let { fieldId } = action.payload;
       fieldId = fieldId.startsWith(`${ROOT_EFORM_ID_PREFIX}.`) ? fieldId.slice(`${ROOT_EFORM_ID_PREFIX}.`.length) : fieldId;
@@ -105,13 +173,35 @@ const editorSlice = createSlice({
       state.formDefinition.stepDefinitions[state.activeStep].schema.required = state.formDefinition.stepDefinitions[
         state.activeStep
       ].schema.required?.filter((value) => value !== fieldId);
+      state.selectedField = undefined;
     }),
     updateFormData: create.reducer((state, action: PayloadAction<{ formData: FormData }>) => {
       state.formData = { ...action.payload.formData };
     }),
-    updateSelectedFieldPropertiesFormData: create.reducer((state, action: PayloadAction<{ formData: FormData }>) => {
-      state.selectedFieldPropertiesFormData = { ...action.payload.formData };
-    }),
+    updateSelectedFieldPropertiesFormData: create.reducer(
+      (state, action: PayloadAction<{ formData: Record<string, string> }>) => {
+        state.selectedFieldPropertiesFormData = { ...action.payload.formData };
+        if (state.selectedField) {
+          const {
+            schema: newSchema,
+            uiSchema: newUiSchema,
+            requiredFields: newRequiredFields,
+          } = mapFormDataToFieldSchemas({
+            activeStep: state.activeStep,
+            fieldName: state.selectedField as string,
+            formData: state.selectedFieldPropertiesFormData,
+            formDefinition: state.formDefinition,
+          });
+
+          if (state.formDefinition.stepDefinitions[state.activeStep].schema.properties) {
+            // @ts-expect-error: For some reason, even though we do undefined check, ts compiler shows error
+            state.formDefinition.stepDefinitions[state.activeStep].schema.properties[state.selectedField] = { ...newSchema };
+          }
+          state.formDefinition.stepDefinitions[state.activeStep].schema.required = [...newRequiredFields];
+          state.formDefinition.stepDefinitions[state.activeStep].uiSchema[state.selectedField] = { ...newUiSchema };
+        }
+      }
+    ),
   }),
 });
 
@@ -120,7 +210,6 @@ export const {
   updateFormData,
   deleteField,
   addField,
-  updateField,
   updateActiveTabInRightPanel,
   switchAutoSave,
   updateSelectedField,

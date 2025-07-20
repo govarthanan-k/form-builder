@@ -1,16 +1,27 @@
 "use client";
 
-import { RotateCcw, Trash2 } from "lucide-react";
+import { JSONSchema7 } from "json-schema";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { useAppDispatch, useAppSelector } from "../rtk/app/hooks";
 import { updateActiveTabInRightPanel } from "../rtk/features";
-import { RightPanelTab } from "../rtk/features/editor/editor.types";
+import { FormDefinition, RightPanelTab } from "../rtk/features/editor/editor.types";
 import { FieldPropertiesForm } from "./FieldPropertiesForm";
 import { JsonEditor } from "./JsonEditor";
+
+const getFieldNameFromFieldId = ({
+  fieldName,
+  formDefinition,
+  activeStep,
+}: {
+  fieldName: string;
+  formDefinition: FormDefinition;
+  activeStep: number;
+}): string => {
+  return (formDefinition.stepDefinitions[activeStep].schema.properties?.[fieldName] as JSONSchema7).title ?? "";
+};
 
 export const RightSideBar = () => {
   const { selectedField, devMode, activeTabInRightPanel, formDefinition, activeStep, formData } = useAppSelector(
@@ -69,62 +80,16 @@ export const RightSideBar = () => {
           <Card>
             <CardHeader>
               {selectedField ? (
-                <CardTitle>Editing Properties of {selectedField}</CardTitle>
+                <CardTitle>
+                  Field Properties of {getFieldNameFromFieldId({ fieldName: selectedField, formDefinition, activeStep })}
+                </CardTitle>
               ) : (
                 <CardTitle>Form Properties</CardTitle>
               )}
             </CardHeader>
             <CardContent className="grid gap-6">
-              {/* <div className="grid w-full items-start gap-4" id="error_container">
-                <Alert variant="destructive">
-                  <AlertCircleIcon />
-                  <AlertTitle>Unable to process your payment.</AlertTitle>
-                  <AlertDescription>
-                    <p>Please verify your billing information and try again.</p>
-                    <ul className="list-inside list-disc text-sm">
-                      <li>Check your card details</li>
-                      <li>Ensure sufficient funds</li>
-                      <li>Verify billing address</li>
-                    </ul>
-                  </AlertDescription>
-                </Alert>
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="fieldName">Field Name</Label>
-                <Input id="fieldName" defaultValue="firstName" />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="label">Label</Label>
-                <Input id="label" defaultValue="First Name" />
-              </div>
-
-              <div className="grid gap-3">
-                <Label htmlFor="placeholder">Placeholder</Label>
-                <Input id="placeholder" defaultValue="Enter your first name" />
-              </div>
-
-              <div className="grid gap-3">
-                <Label htmlFor="defaultValue">Default Value</Label>
-                <Input id="defaultValue" />
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Checkbox id="required" />
-                <Label htmlFor="required">Required</Label>
-              </div> */}
               <FieldPropertiesForm />
             </CardContent>
-            <CardFooter className="w-full">
-              <div className="flex w-full gap-2">
-                <Button variant="outline" className="w-1/2 rounded-md px-4 py-2">
-                  <RotateCcw />
-                  Reset Field
-                </Button>
-                <Button variant="destructive" className="w-1/2 rounded-md px-4 py-2">
-                  <Trash2 /> Delete Field
-                </Button>
-              </div>
-            </CardFooter>
           </Card>
         </TabsContent>
         <TabsContent value="Data Schema">

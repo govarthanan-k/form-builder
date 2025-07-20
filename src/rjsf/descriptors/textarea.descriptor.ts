@@ -8,7 +8,7 @@ export const textareaFieldDescriptor: Descriptor = {
   uiSchema: {
     "ui:widget": "textarea",
     "ui:options": {
-      help: "This is an help text",
+      description: "This is the field description",
       fieldType: "textarea",
     },
   },
@@ -33,5 +33,6 @@ export const textareaFieldDescriptor: Descriptor = {
         "ui:options": {},
       },
     },
+    fieldsOfUiOptions: ["fieldType", "description"],
   },
 };
