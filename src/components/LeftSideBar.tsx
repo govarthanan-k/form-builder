@@ -107,7 +107,7 @@ interface FieldProps {
   value: ReactNode; // allows string, icon, JSX, etc.
 }
 
-const Field = ({ label, value }: FieldProps) => (
+export const Field = ({ label, value }: FieldProps) => (
   <div className="flex flex-col">
     <span className="text-muted-foreground text-sm">{label}</span>
     <span className="text-sm font-medium">{value}</span>
