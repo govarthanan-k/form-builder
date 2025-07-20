@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Save, UploadCloud } from "lucide-react";
+import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ export const SiteHeader = () => {
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Dev Mode</span>
             <Switch
+              id="devModeToggle"
               checked={devMode}
               onCheckedChange={() => {
                 dispatch(switchDevMode());
@@ -54,6 +56,7 @@ export const SiteHeader = () => {
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Auto Save</span>
             <Switch
+              id="autoSaveToggle"
               checked={autoSave}
               onCheckedChange={() => {
                 dispatch(switchAutoSave());
@@ -65,16 +68,15 @@ export const SiteHeader = () => {
             <ThemeToggle oneClickSwitch />
           </div>
           <div className="flex gap-2">
-            {!autoSave && (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => alert("Saved!")}
-                className="bg-green-600 text-white hover:bg-green-700"
-              >
-                <Save className="mr-1 h-4 w-4" /> Save
-              </Button>
-            )}
+            <Button
+              disabled={autoSave}
+              variant="secondary"
+              size="sm"
+              onClick={() => alert("Saved!")}
+              className="bg-green-600 text-white hover:bg-green-700"
+            >
+              <Save className="mr-1 h-4 w-4" /> Save
+            </Button>
             <Button size="sm" onClick={() => alert("Published!")} className="bg-blue-600 text-white hover:bg-blue-700">
               <UploadCloud className="mr-1 h-4 w-4" /> Publish
             </Button>
@@ -88,7 +90,7 @@ export const SiteHeader = () => {
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => alert("Logging out...")}>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => toast.success("Logout success")}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
