@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UIOptionsType, UiSchema } from "@rjsf/utils";
+import { castDraft } from "immer";
 import { JSONSchema7, JSONSchema7Definition } from "json-schema";
 
 import { ROOT_EFORM_ID_PREFIX } from "../../../components/FormInTheMiddle";
@@ -7,9 +8,20 @@ import { FieldType } from "../../../components/LeftSideBar";
 import { descriptors } from "../../../rjsf/descriptors";
 import { EditorState, FormData, FormDefinition, RightPanelTab, StepDefinition } from "./editor.types";
 
-export const EMPTY_STEP_DEFINITION: StepDefinition = {
-  schema: { type: "object", required: [], properties: {} },
-  uiSchema: { "ui:order": [] },
+const getEmptyStepDefinition = (stepType?: "Step" | "Summary" | "ThankYou", stepName?: string): StepDefinition => {
+  return {
+    isThankYouPage: stepType === "ThankYou",
+    isSummaryPage: stepType === "Summary",
+    stepName: stepName ?? "Step-1",
+    schema: {
+      type: "object",
+      required: [],
+      properties: {},
+    },
+    uiSchema: {
+      "ui:order": [],
+    },
+  };
 };
 
 const initialState: EditorState = {
@@ -17,7 +29,7 @@ const initialState: EditorState = {
   autoSave: false,
   devMode: true,
   formDefinition: {
-    stepDefinitions: [{ ...EMPTY_STEP_DEFINITION }],
+    stepDefinitions: [{ ...getEmptyStepDefinition() }],
   },
   formData: {},
 };
@@ -235,12 +247,25 @@ const editorSlice = createSlice({
         }
       }
     ),
+    updateActiveStep: create.reducer((state, action: PayloadAction<{ activeStep: number }>) => {
+      state.activeStep = action.payload.activeStep;
+    }),
+    updateAddStepModalOpen: create.reducer((state, action: PayloadAction<{ isOpen: boolean }>) => {
+      state.isAddStepModalOpen = action.payload.isOpen;
+    }),
+    addStep: create.reducer((state, action: PayloadAction<{ stepName: string; stepType: "Step" | "Summary" | "ThankYou" }>) => {
+      const newStepDefinition = getEmptyStepDefinition(action.payload.stepType, action.payload.stepName);
+      state.formDefinition.stepDefinitions.push(castDraft(newStepDefinition));
+    }),
   }),
 });
 
 export const {
+  addStep,
+  updateAddStepModalOpen,
   updateSelectedFieldPropertiesFormData,
   updateFormData,
+  updateActiveStep,
   deleteField,
   addField,
   updateActiveTabInRightPanel,

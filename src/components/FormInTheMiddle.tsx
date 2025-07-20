@@ -24,8 +24,8 @@ export const FormInTheMiddle = (props: FormSchema) => {
   return (
     <Form
       formData={formData}
-      liveOmit
-      omitExtraData
+      // liveOmit
+      // omitExtraData
       schema={props.dataSchema}
       uiSchema={props.uiSchema}
       validator={validator}
