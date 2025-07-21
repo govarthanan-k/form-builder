@@ -1,18 +1,22 @@
 "use client";
 
-import { ArrowRight, Plus, SquarePen, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { ArrowRight, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-import { cn } from "../lib/utils";
 import { useAppDispatch, useAppSelector } from "../rtk/app/hooks";
 import { updateActiveStep, updateAddStepModalOpen } from "../rtk/features";
 import { AddStepForm } from "./AddStepForm";
 import { DropZone } from "./DropArea";
 import { FormInTheMiddle } from "./FormInTheMiddle";
+import { SortableStep } from "./SortableStep";
 import { DialogHeader } from "./ui/dialog";
 
 export const handleKey = (e: React.KeyboardEvent, callback: () => void) => {
@@ -25,6 +29,30 @@ export const handleKey = (e: React.KeyboardEvent, callback: () => void) => {
 export const MiddlePanel = () => {
   const { formDefinition, activeStep, isAddStepModalOpen } = useAppSelector((state) => state.editor);
   const dispatch = useAppDispatch();
+  const [items, setItems] = useState(formDefinition.stepDefinitions.map((s) => s.stepName));
+
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    if (active.id !== over.id) {
+      const oldIndex = items.indexOf(active.id as string);
+      const newIndex = items.indexOf(over.id as string);
+      const newItems = arrayMove(items, oldIndex, newIndex);
+
+      setItems(newItems);
+
+      // Todo: , Use formDef directly, update store with reordered list
+      // dispatch(reorderSteps(newItems));
+    }
+  };
+
+  useEffect(() => {
+    setItems(formDefinition.stepDefinitions.map((s) => s.stepName));
+  }, [formDefinition]);
 
   return (
     <div className="flex w-full flex-col overflow-y-auto" style={{ height: "calc(100vh - 88px)" }}>
@@ -59,33 +87,28 @@ export const MiddlePanel = () => {
             </CardHeader>
 
             <CardContent className="flex flex-col px-0">
-              {formDefinition.stepDefinitions.map((stepDefinition, index) => {
-                return (
-                  <div
-                    key={`${index}-${stepDefinition.stepName}`}
-                    className={cn(
-                      "border-border dark:border-border/40 w-full rounded-md border-b px-6 py-3",
-                      activeStep === index ? "bg-[#5a287d] text-white" : ""
-                    )}
-                  >
-                    <div className="flex justify-between gap-2">
-                      <div>
-                        {index + 1} - {stepDefinition.stepName}
-                      </div>
-                      <div className="flex items-center justify-center gap-2">
-                        <SquarePen
-                          className="h-4 w-4 cursor-pointer"
-                          onClick={() => {
-                            dispatch(updateActiveStep({ activeStep: index }));
-                          }}
-                        />
-                        {/* Todo - Add a confirmation dialog after click on delete step icon */}
-                        <Trash2 className="h-4 w-4" color="red" />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+                modifiers={[restrictToVerticalAxis]}
+              >
+                <SortableContext items={items} strategy={verticalListSortingStrategy}>
+                  {items.map((stepName, index) => {
+                    const stepDefinition = formDefinition.stepDefinitions.find((s) => s.stepName === stepName)!;
+
+                    return (
+                      <SortableStep
+                        key={stepName}
+                        stepDefinition={stepDefinition}
+                        index={index}
+                        activeStep={activeStep}
+                        onSelectStep={(stepIdx) => dispatch(updateActiveStep({ activeStep: stepIdx }))}
+                      />
+                    );
+                  })}
+                </SortableContext>
+              </DndContext>
             </CardContent>
           </Card>
         </div>
