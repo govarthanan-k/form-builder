@@ -249,6 +249,7 @@ const editorSlice = createSlice({
     ),
     updateActiveStep: create.reducer((state, action: PayloadAction<{ activeStep: number }>) => {
       state.activeStep = action.payload.activeStep;
+      state.selectedField = undefined;
     }),
     updateAddStepModalOpen: create.reducer((state, action: PayloadAction<{ isOpen: boolean }>) => {
       state.isAddStepModalOpen = action.payload.isOpen;
