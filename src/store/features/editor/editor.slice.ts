@@ -1,9 +1,9 @@
 import { descriptors } from "@/rjsf/descriptors";
-import { getEmptyStepDefinition } from "@/utils";
+import { generateUniqueFieldName, getEmptyStepDefinition } from "@/utils";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UIOptionsType, UiSchema } from "@rjsf/utils";
 import { castDraft } from "immer";
-import { JSONSchema7, JSONSchema7Definition } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 
 import { FieldType } from "@/components/LeftPanel";
 
@@ -19,21 +19,6 @@ const initialState: EditorState = {
     stepDefinitions: [{ ...getEmptyStepDefinition() }],
   },
   formData: {},
-};
-
-export const generateUniqueFieldName = (
-  existingFields: Record<string, JSONSchema7Definition>,
-  prefix: string,
-  padding: number = 3
-): string => {
-  let index = 1;
-  let newName = `${prefix}_${String(index).padStart(padding, "0")}`;
-  while (newName in existingFields) {
-    index++;
-    newName = `${prefix}_${String(index).padStart(padding, "0")}`;
-  }
-
-  return newName;
 };
 
 const mapFieldSchemasToFormData = ({
@@ -161,7 +146,7 @@ const editorSlice = createSlice({
       const step = state.formDefinition.stepDefinitions[state.activeStep];
       step.schema.properties ??= {};
       const existingFields = step.schema.properties;
-      const newFieldName = generateUniqueFieldName(existingFields, action.payload.fieldType);
+      const newFieldName = generateUniqueFieldName({ existingFields, prefix: action.payload.fieldType });
       existingFields[newFieldName] = { ...dataSchema };
       step.uiSchema[newFieldName] = { ...uiSchema };
       step.uiSchema["ui:order"] = [...(step.uiSchema["ui:order"] ?? []), newFieldName];
