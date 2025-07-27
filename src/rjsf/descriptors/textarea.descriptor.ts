@@ -2,13 +2,25 @@ import { Descriptor } from "./descriptors.types";
 
 export const textareaFieldDescriptor: Descriptor = {
   dataSchema: {
-    type: "string",
+    type: "object",
     title: "New Textarea Field",
+    properties: {
+      firstName: {
+        type: "string",
+        title: "First Name",
+      },
+    },
   },
   uiSchema: {
     "ui:options": {
       description: "This is the field description",
       fieldType: "textarea",
+    },
+    firstName: {
+      "ui:options": {
+        description: "This is the field description",
+        fieldType: "input",
+      },
     },
   },
   propertiesConfiguration: {
