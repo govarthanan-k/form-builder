@@ -1,4 +1,4 @@
-import { StepDefinition } from "@/types/editor.types";
+import { StepDefinition } from "@/store/features/editor/editor.types";
 
 export interface SortableStepProps {
   stepDefinition: StepDefinition;

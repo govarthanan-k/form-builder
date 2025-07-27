@@ -1,4 +1,5 @@
 import { descriptors } from "@/rjsf/descriptors";
+import { getEmptyStepDefinition } from "@/utils";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UIOptionsType, UiSchema } from "@rjsf/utils";
 import { castDraft } from "immer";
@@ -8,23 +9,7 @@ import { FieldType } from "@/components/LeftPanel";
 
 import { ROOT_EFORM_ID_PREFIX } from "@/constants";
 
-import { EditorState, FormData, FormDefinition, RightPanelTab, StepDefinition } from "./editor.types";
-
-const getEmptyStepDefinition = (stepType?: "Step" | "Summary" | "ThankYou", stepName?: string): StepDefinition => {
-  return {
-    isThankYouPage: stepType === "ThankYou",
-    isSummaryPage: stepType === "Summary",
-    stepName: stepName ?? "Step-1",
-    schema: {
-      type: "object",
-      required: [],
-      properties: {},
-    },
-    uiSchema: {
-      "ui:order": [],
-    },
-  };
-};
+import { EditorState, FormData, FormDefinition, RightPanelTab } from "./editor.types";
 
 const initialState: EditorState = {
   activeStep: 0,
