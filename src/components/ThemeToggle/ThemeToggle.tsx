@@ -12,7 +12,6 @@ import { ThemeToggleProps } from "./ThemeToggle.types";
 
 export function ThemeToggle(props: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme();
-
   const [mounted, setMounted] = useState(false);
 
   // Prevent hydration mismatch
@@ -21,7 +20,6 @@ export function ThemeToggle(props: ThemeToggleProps) {
   }, []);
 
   if (!mounted) return null;
-
   const isDark = resolvedTheme === "dark";
 
   const toggleTheme = () => {

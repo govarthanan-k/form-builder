@@ -14,9 +14,7 @@ import { ROOT_EFORM_ID_PREFIX } from "@/constants";
 
 export const CustomFieldTemplate = (props: FieldTemplateProps) => {
   const FieldTemplate = getDefaultRegistry().templates.FieldTemplate;
-
   const { selectedField } = useAppSelector((state) => state.editor);
-
   const dispatch = useAppDispatch();
 
   return props.id !== ROOT_EFORM_ID_PREFIX ? (
@@ -42,7 +40,6 @@ export const CustomFieldTemplate = (props: FieldTemplateProps) => {
         >
           <Trash2 className="h-4 w-4" color="red" />
         </div>
-
         {/* Settings icon */}
         <div
           role="button"
@@ -61,7 +58,6 @@ export const CustomFieldTemplate = (props: FieldTemplateProps) => {
           <Settings className="h-4 w-4" color="blue" />
         </div>
       </div>
-
       <FieldTemplate {...props}>{props.uiSchema?.["ui:options"]?.hidden ? <></> : props.children}</FieldTemplate>
     </div>
   ) : (

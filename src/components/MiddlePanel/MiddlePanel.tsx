@@ -20,27 +20,19 @@ import { SortableStep } from "@/components/SortableStep";
 
 export const MiddlePanel = () => {
   const { activeStep, formDefinition, isAddStepModalOpen } = useAppSelector((state) => state.editor);
-
   const dispatch = useAppDispatch();
-
   const [items, setItems] = useState(formDefinition.stepDefinitions.map((s) => s.stepName));
-
   const sensors = useSensors(useSensor(PointerSensor));
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (!over) return;
-
     if (active.id !== over.id) {
       const oldIndex = items.indexOf(active.id as string);
-
       const newIndex = items.indexOf(over.id as string);
-
       const newItems = arrayMove(items, oldIndex, newIndex);
-
       setItems(newItems);
-
       // Todo: , Use formDef directly, update store with reordered list
       // dispatch(reorderSteps(newItems));
     }

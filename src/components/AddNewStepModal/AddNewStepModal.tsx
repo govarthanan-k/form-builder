@@ -10,23 +10,18 @@ import { FormValidation, UiSchema } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import { JSONSchema7 } from "json-schema";
 
-import { ROOT_ADD_STEP_FORM_ID_PREFIX } from "@/constants";
-
 import { Button } from "@/components/ui/button";
+
+import { ROOT_ADD_STEP_FORM_ID_PREFIX } from "@/constants";
 
 import { StepFormData } from "./AddNewStepModal.types";
 
 export const AddNewStepModal = () => {
   const { formDefinition } = useAppSelector((state) => state.editor);
-
   const dispatch = useAppDispatch();
-
   const formRef = useRef<InstanceType<typeof RJSFForm>>(null);
-
   const [formData, setFormData] = useState<StepFormData>({});
-
   const [liveValidate, setLiveValidate] = useState(false);
-
   const uiSchema: UiSchema = {};
 
   const handleChange = (e: IChangeEvent<StepFormData>) => {
@@ -39,11 +34,9 @@ export const AddNewStepModal = () => {
       formRef.current.submit();
     }
   };
-
   const onSubmit = (event: IChangeEvent) => {
     if (event.formData.stepName) {
       dispatch(updateAddStepModalOpen({ isOpen: false }));
-
       // Use setTimeout to prevent race condition
       setTimeout(() => {
         dispatch(addStep({ stepName: event.formData.stepName, stepType: event.formData.stepType }));
@@ -58,9 +51,7 @@ export const AddNewStepModal = () => {
 
   const customValidate = (formData: StepFormData, errors: FormValidation): FormValidation => {
     const stepNames = formDefinition.stepDefinitions.map((s) => s.stepName.trim().toLowerCase());
-
     const currentStep = formData.stepName?.trim().toLowerCase();
-
     if (currentStep && stepNames.includes(currentStep)) {
       errors.stepName?.addError("Step name already exists");
     }
@@ -70,11 +61,9 @@ export const AddNewStepModal = () => {
 
   const getSchema = (): JSONSchema7 => {
     const stepTypes = ["Step"];
-
     if (formDefinition.stepDefinitions.every(({ isSummaryPage }) => !isSummaryPage)) {
       stepTypes.push("Summary");
     }
-
     if (formDefinition.stepDefinitions.every(({ isThankYouPage }) => !isThankYouPage)) {
       stepTypes.push("ThankYou");
     }
@@ -115,7 +104,6 @@ export const AddNewStepModal = () => {
       >
         <></>
       </Form>
-
       <div className="mt-4 flex justify-end gap-2">
         <Button variant="outline" onClick={() => dispatch(updateAddStepModalOpen({ isOpen: false }))}>
           Cancel

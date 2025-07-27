@@ -27,7 +27,6 @@ export const RightPanel = () => {
   const { activeStep, activeTabInRightPanel, devMode, formData, formDefinition, selectedField } = useAppSelector(
     (state) => state.editor
   );
-
   const dispatch = useAppDispatch();
 
   return (

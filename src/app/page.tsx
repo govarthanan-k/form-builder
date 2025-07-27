@@ -12,7 +12,6 @@ import { RightPanel } from "@/components/RightPanel";
 
 export default function EFormDesigner() {
   const [isClient, setIsClient] = useState(false);
-
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -25,7 +24,6 @@ export default function EFormDesigner() {
     <DndContext
       onDragEnd={(event) => {
         const fieldType = event.active.id as FieldType;
-
         const isDrop = event.over?.id === "drop-zone";
         if (isDrop) {
           // addField

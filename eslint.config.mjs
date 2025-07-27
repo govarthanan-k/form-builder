@@ -26,10 +26,9 @@ const eslintConfig = [
       "sort-exports/sort-exports": ["error", { sortDir: "asc", ignoreCase: false, sortExportKindFirst: "type" }],
       "padding-line-between-statements": [
         "error",
-        { blankLine: "always", prev: "function", next: "function" },
-        { blankLine: "always", prev: "const", next: "const" },
+        { blankLine: "always", prev: "*", next: "function" },
         { blankLine: "always", prev: "*", next: "return" },
-        { blankLine: "always", prev: "export", next: "export" },
+        { blankLine: "always", prev: "*", next: "export" },
       ],
 
       // 🔧 For class methods

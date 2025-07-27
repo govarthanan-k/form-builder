@@ -9,7 +9,6 @@ export function Tag(props: TagProps) {
   const { onRemove, tag } = props;
 
   const textRef = useRef<HTMLSpanElement>(null);
-
   const [isTruncated, setIsTruncated] = useState(false);
 
   useEffect(() => {

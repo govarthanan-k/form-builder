@@ -12,17 +12,15 @@ import { IChangeEvent } from "@rjsf/core";
 import Form from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
 
-import { PROPERTIES_ROOT_EFORM_ID_PREFIX } from "@/constants";
-
 import { FieldType } from "@/components/LeftPanel";
+
+import { PROPERTIES_ROOT_EFORM_ID_PREFIX } from "@/constants";
 
 import { GetPropertiesSchemaArgs } from "./FieldPropertiesForm.types";
 
 export const FieldPropertiesForm = () => {
   const { activeStep, formDefinition, selectedField, selectedFieldPropertiesFormData } = useAppSelector((state) => state.editor);
-
   const dispatch = useAppDispatch();
-
   const { dataSchema, uiSchema } = getPropertiesSchema({
     formDefinition,
     activeStep,
@@ -31,14 +29,10 @@ export const FieldPropertiesForm = () => {
 
   useEffect(() => {
     const autofocusField = Object.entries(uiSchema).find(([, config]) => config?.["ui:autofocus"] === true)?.[0];
-
     let timeout: NodeJS.Timeout;
-
     if (autofocusField) {
       const selectorBase = `${PROPERTIES_ROOT_EFORM_ID_PREFIX}.${autofocusField}`;
-
       const inputSelector = `input[name='${selectorBase}']`;
-
       timeout = setTimeout(() => {
         const input = document.querySelector(inputSelector) as HTMLElement;
         if (input) input.focus();

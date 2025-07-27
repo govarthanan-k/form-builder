@@ -9,13 +9,12 @@ import { IChangeEvent } from "@rjsf/core";
 import Form from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
 
-import { FormSchema } from "@/types/editor.types";
-
 import { ROOT_EFORM_ID_PREFIX } from "@/constants";
+
+import { FormSchema } from "@/types/editor.types";
 
 export const FormCanvas = (props: FormSchema) => {
   const dispatch = useAppDispatch();
-
   const { formData } = useAppSelector((state) => state.editor);
 
   const handleChange = (e: IChangeEvent) => {

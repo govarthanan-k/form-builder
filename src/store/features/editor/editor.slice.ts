@@ -4,9 +4,9 @@ import { UIOptionsType, UiSchema } from "@rjsf/utils";
 import { castDraft } from "immer";
 import { JSONSchema7, JSONSchema7Definition } from "json-schema";
 
-import { ROOT_EFORM_ID_PREFIX } from "@/constants";
-
 import { FieldType } from "@/components/LeftPanel";
+
+import { ROOT_EFORM_ID_PREFIX } from "@/constants";
 
 import { EditorState, FormData, FormDefinition, RightPanelTab, StepDefinition } from "./editor.types";
 
@@ -43,7 +43,6 @@ export const generateUniqueFieldName = (
 ): string => {
   let index = 1;
   let newName = `${prefix}_${String(index).padStart(padding, "0")}`;
-
   while (newName in existingFields) {
     index++;
     newName = `${prefix}_${String(index).padStart(padding, "0")}`;
@@ -62,7 +61,6 @@ const mapFieldSchemasToFormData = ({
   activeStep: number;
 }): FormData => {
   const fieldUiSchema = formDefinition.stepDefinitions[activeStep].uiSchema[fieldName] as UiSchema;
-
   const formData = {
     ...(formDefinition.stepDefinitions[activeStep].schema.properties?.[fieldName] as JSONSchema7),
     ...fieldUiSchema["ui:options"],
@@ -92,18 +90,12 @@ const mapFormDataToFieldSchemas = ({
   let fieldSchema: JSONSchema7 = formDefinition.stepDefinitions[activeStep].schema.properties?.[fieldName] as JSONSchema7;
   let fieldUiSchema: UiSchema = formDefinition.stepDefinitions[activeStep].uiSchema[fieldName];
   let newRequiredFields = [...(formDefinition.stepDefinitions[activeStep].schema.required || [])];
-
   const isFieldRenamed = (formData as { fieldName: string }).fieldName !== fieldName;
-
   const fieldType: FieldType = fieldUiSchema["ui:options"]?.fieldType;
-
   if (fieldType) {
     const { fieldsOfUiOptions } = descriptors[fieldType].propertiesConfiguration;
-
     const newUiOptions: UIOptionsType = {};
-
     const newSchemaProps: Record<string, string> = {};
-
     Object.entries(formData).forEach(([key, value]) => {
       if (fieldsOfUiOptions?.includes(key)) {
         newUiOptions[key] = value;
@@ -119,19 +111,16 @@ const mapFormDataToFieldSchemas = ({
         newSchemaProps[key] = value;
       }
     });
-
     fieldUiSchema = {
       ...fieldUiSchema,
       "ui:options": {
         ...newUiOptions,
       },
     };
-
     fieldSchema = {
       ...newSchemaProps,
     };
   }
-
   if (isFieldRenamed) {
     // Replace old field name with new field name in `required` array
     const requiredFieldIndex = newRequiredFields.indexOf(fieldName);
@@ -168,26 +157,26 @@ const editorSlice = createSlice({
         formDefinition: state.formDefinition,
       });
     }),
+
     switchDevMode: create.reducer((state) => {
       state.devMode = !state.devMode;
       state.activeTabInRightPanel = "Inspect";
     }),
+
     switchAutoSave: create.reducer((state) => {
       state.autoSave = !state.autoSave;
     }),
+
     updateActiveTabInRightPanel: create.reducer((state, action: PayloadAction<{ activeTabInRightPanel: RightPanelTab }>) => {
       state.activeTabInRightPanel = action.payload.activeTabInRightPanel;
     }),
+
     addField: create.reducer((state, action: PayloadAction<{ fieldType: FieldType }>) => {
       const { dataSchema, uiSchema } = descriptors[action.payload.fieldType];
-
       const step = state.formDefinition.stepDefinitions[state.activeStep];
       step.schema.properties ??= {};
-
       const existingFields = step.schema.properties;
-
       const newFieldName = generateUniqueFieldName(existingFields, action.payload.fieldType);
-
       existingFields[newFieldName] = { ...dataSchema };
       step.uiSchema[newFieldName] = { ...uiSchema };
       step.uiSchema["ui:order"] = [...(step.uiSchema["ui:order"] ?? []), newFieldName];
@@ -206,15 +195,16 @@ const editorSlice = createSlice({
       state.formDefinition.stepDefinitions[state.activeStep].uiSchema["ui:order"] = state.formDefinition.stepDefinitions[
         state.activeStep
       ].uiSchema["ui:order"]?.filter((value) => value !== fieldId);
-
       state.formDefinition.stepDefinitions[state.activeStep].schema.required = state.formDefinition.stepDefinitions[
         state.activeStep
       ].schema.required?.filter((value) => value !== fieldId);
       state.selectedField = undefined;
     }),
+
     updateFormData: create.reducer((state, action: PayloadAction<{ formData: FormData }>) => {
       state.formData = { ...action.payload.formData };
     }),
+
     updateSelectedFieldPropertiesFormData: create.reducer(
       (state, action: PayloadAction<{ formData: Record<string, string> }>) => {
         state.selectedFieldPropertiesFormData = { ...action.payload.formData };
@@ -229,14 +219,11 @@ const editorSlice = createSlice({
             formData: state.selectedFieldPropertiesFormData,
             formDefinition: state.formDefinition,
           });
-
           const isFieldRenamed =
             (state.selectedFieldPropertiesFormData as { fieldName: string }).fieldName !== state.selectedField;
-
           const newFieldName = isFieldRenamed
             ? (state.selectedFieldPropertiesFormData as { fieldName: string }).fieldName
             : state.selectedField;
-
           if (state.formDefinition.stepDefinitions[state.activeStep].schema.properties) {
             if (isFieldRenamed) {
               // @ts-expect-error: For some reason, even though we do undefined check, ts compiler shows error
@@ -252,13 +239,16 @@ const editorSlice = createSlice({
         }
       }
     ),
+
     updateActiveStep: create.reducer((state, action: PayloadAction<{ activeStep: number }>) => {
       state.activeStep = action.payload.activeStep;
       state.selectedField = undefined;
     }),
+
     updateAddStepModalOpen: create.reducer((state, action: PayloadAction<{ isOpen: boolean }>) => {
       state.isAddStepModalOpen = action.payload.isOpen;
     }),
+
     addStep: create.reducer((state, action: PayloadAction<{ stepName: string; stepType: "Step" | "Summary" | "ThankYou" }>) => {
       const newStepDefinition = getEmptyStepDefinition(action.payload.stepType, action.payload.stepName);
       state.formDefinition.stepDefinitions.push(castDraft(newStepDefinition));

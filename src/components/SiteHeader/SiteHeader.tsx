@@ -23,7 +23,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const SiteHeader = () => {
   const { autoSave, devMode } = useAppSelector((state) => state.editor);
-
   const dispatch = useAppDispatch();
 
   return (
