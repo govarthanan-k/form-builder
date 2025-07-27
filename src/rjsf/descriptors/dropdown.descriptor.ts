@@ -17,6 +17,14 @@ export const dropdownFieldDescriptor: Descriptor = {
       type: "object",
       required: ["fieldName", "title"],
       properties: {
+        type: {
+          type: "string",
+          title: "Type",
+        },
+        fieldType: {
+          type: "string",
+          title: "Field Type",
+        },
         fieldName: {
           type: "string",
           title: "Field Name",
@@ -25,18 +33,44 @@ export const dropdownFieldDescriptor: Descriptor = {
           type: "string",
           title: "Field Label",
         },
+        description: {
+          type: "string",
+          title: "Description",
+        },
+        required: {
+          type: "boolean",
+          title: "Required?",
+        },
+        hidden: {
+          type: "boolean",
+          title: "Hidden?",
+        },
+        enum: {
+          type: "array",
+          title: "Options",
+          items: {
+            type: "string",
+          },
+        },
       },
     },
     uiSchema: {
+      type: { "ui:widget": "hidden", "ui:options": {}, patches: [{ op: "replace", path: "type", type: "schema" }] },
+      fieldType: {
+        "ui:widget": "hidden",
+        "ui:options": {},
+        patches: [{ op: "replace", path: "ui:options.fieldType", type: "uiSchema" }],
+      },
       fieldName: {
         "ui:autofocus": true,
         "ui:options": {},
+        patches: [{ op: "replace", path: "fieldName", type: "meta" }],
       },
+      title: { "ui:options": {}, patches: [{ op: "replace", path: "title", type: "schema" }] },
+      description: { "ui:options": {}, patches: [{ op: "replace", path: "ui:options.description", type: "uiSchema" }] },
+      required: { "ui:options": {}, patches: [{ op: "replace", path: "required", type: "meta" }] },
+      hidden: { "ui:options": {}, patches: [{ op: "replace", path: "ui:options.hidden", type: "uiSchema" }] },
+      enum: { "ui:options": {}, patches: [{ op: "replace", path: "enum", type: "schema" }] },
     },
-    fieldsOfUiOptions: ["fieldType", "description"],
   },
 };
-
-export const f1 = () => {};
-
-export const f2 = () => {};

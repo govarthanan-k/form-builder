@@ -1,15 +1,48 @@
 import { descriptors } from "@/rjsf/descriptors";
-import { generateUniqueFieldName, getEmptyStepDefinition } from "@/utils";
+import { generateUniqueFieldName, getEmptyStepDefinition, getSchemaByPath, getUiSchemaByPath } from "@/utils";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UIOptionsType, UiSchema } from "@rjsf/utils";
+import { UiSchema } from "@rjsf/utils";
 import { castDraft } from "immer";
 import { JSONSchema7 } from "json-schema";
 
 import { FieldType } from "@/components/LeftPanel";
 
+import { isFieldRequired } from "@/utils/isFieldRequired";
 import { ROOT_EFORM_ID_PREFIX } from "@/constants";
 
 import { EditorState, FormData, FormDefinition, RightPanelTab } from "./editor.types";
+
+export interface MapFormDataToFieldSchemasArgs {
+  activeStep: number;
+  fieldName: string;
+  formData: FormData;
+  formDefinition: FormDefinition;
+}
+
+export type Patch = {
+  op: "replace" | "add" | "remove";
+  path: string;
+  value?: unknown;
+};
+
+export function applyPatch<T>(obj: T, path: string, value: unknown): T {
+  const parts = path.split(".");
+  const last = parts.pop() as string;
+
+  let current: unknown = obj;
+  for (const part of parts) {
+    if (typeof current === "object" && current !== null && !(part in current)) {
+      (current as Record<string, unknown>)[part] = {};
+    }
+    current = (current as Record<string, unknown>)[part];
+  }
+
+  if (typeof current === "object" && current !== null) {
+    (current as Record<string, unknown>)[last] = value;
+  }
+
+  return obj;
+}
 
 const initialState: EditorState = {
   activeStep: 0,
@@ -21,7 +54,16 @@ const initialState: EditorState = {
   formData: {},
 };
 
-const mapFieldSchemasToFormData = ({
+const isFieldHidden = (fieldUiSchema?: UiSchema): boolean =>
+  fieldUiSchema?.["ui:widget"] === "hidden" ||
+  fieldUiSchema?.["ui:field"] === "hidden" ||
+  fieldUiSchema?.["ui:template"] === "hidden" ||
+  fieldUiSchema?.["ui:options"]?.hidden;
+
+/**
+ * Converts field schema + uiSchema into flat formData.
+ */
+export const mapFieldSchemasToFormData = ({
   activeStep,
   fieldName,
   formDefinition,
@@ -30,84 +72,103 @@ const mapFieldSchemasToFormData = ({
   formDefinition: FormDefinition;
   activeStep: number;
 }): FormData => {
-  const fieldUiSchema = formDefinition.stepDefinitions[activeStep].uiSchema[fieldName] as UiSchema;
-  const formData = {
-    ...(formDefinition.stepDefinitions[activeStep].schema.properties?.[fieldName] as JSONSchema7),
-    ...fieldUiSchema["ui:options"],
+  const step = formDefinition.stepDefinitions[activeStep];
+
+  const uiSchema = getUiSchemaByPath({ path: fieldName, uiSchema: step.uiSchema });
+  const schema = getSchemaByPath({ path: fieldName, schema: step.schema });
+
+  const required = isFieldRequired({ path: fieldName, schema: step.schema });
+  const hidden = isFieldHidden(uiSchema);
+
+  const fieldType = uiSchema?.["ui:options"]?.fieldType;
+  if (!fieldType) throw new Error(`Missing fieldType for field: ${fieldName}`);
+
+  const formData: Record<string, unknown> = {
     fieldName,
-    required: formDefinition.stepDefinitions[activeStep].schema.required?.includes(fieldName),
-    hidden:
-      fieldUiSchema["ui:widget"] === "hidden" ||
-      fieldUiSchema["ui:field"] === "hidden" ||
-      fieldUiSchema["ui:template"] === "hidden" ||
-      fieldUiSchema["ui:options"]?.hidden,
+    required,
+    hidden,
+    ...schema,
+    ...uiSchema["ui:options"],
   };
 
-  return formData as FormData;
+  // Only pick keys that are configured in the descriptor's data schema
+  const allowedKeys = Object.keys(descriptors[fieldType as FieldType].propertiesConfiguration.dataSchema.properties || {});
+
+  const result: Record<string, unknown> = {};
+  for (const key of allowedKeys) {
+    if (key in formData) {
+      result[key] = formData[key];
+    }
+  }
+
+  return result as FormData;
 };
 
-const mapFormDataToFieldSchemas = ({
+/**
+ * Converts flat formData back into schema + uiSchema using only descriptor patches.
+ */
+export const mapFormDataToFieldSchemas = ({
   activeStep,
   fieldName,
   formData,
   formDefinition,
-}: {
-  fieldName: string;
-  formData: FormData;
-  formDefinition: FormDefinition;
-  activeStep: number;
-}): { schema: JSONSchema7; uiSchema: UiSchema; requiredFields: string[] } => {
-  let fieldSchema: JSONSchema7 = formDefinition.stepDefinitions[activeStep].schema.properties?.[fieldName] as JSONSchema7;
-  let fieldUiSchema: UiSchema = formDefinition.stepDefinitions[activeStep].uiSchema[fieldName];
-  let newRequiredFields = [...(formDefinition.stepDefinitions[activeStep].schema.required || [])];
-  const isFieldRenamed = (formData as { fieldName: string }).fieldName !== fieldName;
-  const fieldType: FieldType = fieldUiSchema["ui:options"]?.fieldType;
-  if (fieldType) {
-    const { fieldsOfUiOptions } = descriptors[fieldType].propertiesConfiguration;
-    const newUiOptions: UIOptionsType = {};
-    const newSchemaProps: Record<string, string> = {};
-    Object.entries(formData).forEach(([key, value]) => {
-      if (fieldsOfUiOptions?.includes(key)) {
-        newUiOptions[key] = value;
-      } else if (key === "required") {
-        {
-          if (value && !newRequiredFields.includes(fieldName)) {
-            newRequiredFields.push(fieldName);
-          } else if (!value && newRequiredFields.includes(fieldName)) {
-            newRequiredFields = newRequiredFields.filter((reqFieldName) => reqFieldName !== fieldName);
+}: MapFormDataToFieldSchemasArgs): {
+  schema: JSONSchema7;
+  uiSchema: UiSchema;
+  requiredFields: string[];
+} => {
+  const step = formDefinition.stepDefinitions[activeStep];
+  const originalFieldName = fieldName;
+  const newFieldName = (formData as { fieldName: string }).fieldName;
+  const uiSchema = step.uiSchema[originalFieldName] ?? {};
+  const requiredFields = [...(step.schema.required ?? [])];
+  const uiOrder = step.uiSchema["ui:order"];
+
+  const fieldType = uiSchema["ui:options"]?.fieldType as FieldType;
+  const descriptor = descriptors[fieldType];
+
+  let updatedSchema: JSONSchema7 = {};
+  let updatedUiSchema: UiSchema = {};
+  let newRequiredFields = [...requiredFields];
+
+  for (const [fieldKey, value] of Object.entries(formData)) {
+    const patches = descriptor.propertiesConfiguration.uiSchema?.[fieldKey]?.patches ?? [];
+
+    for (const patch of patches) {
+      if (patch.type === "schema") {
+        updatedSchema = applyPatch(updatedSchema, patch.path, value);
+      } else if (patch.type === "uiSchema") {
+        updatedUiSchema = applyPatch(updatedUiSchema, patch.path, value);
+      } else if (patch.type === "meta" && patch.path === "required") {
+        if (value) {
+          if (!newRequiredFields.includes(originalFieldName)) {
+            newRequiredFields.push(originalFieldName);
           }
+        } else {
+          newRequiredFields = newRequiredFields.filter((f) => f !== originalFieldName);
         }
-      } else if (!["fieldName"].includes(key)) {
-        newSchemaProps[key] = value;
       }
-    });
-    fieldUiSchema = {
-      ...fieldUiSchema,
-      "ui:options": {
-        ...newUiOptions,
-      },
-    };
-    fieldSchema = {
-      ...newSchemaProps,
-    };
-  }
-  if (isFieldRenamed) {
-    // Replace old field name with new field name in `required` array
-    const requiredFieldIndex = newRequiredFields.indexOf(fieldName);
-    if (requiredFieldIndex !== -1) {
-      newRequiredFields[requiredFieldIndex] = (formData as { fieldName: string }).fieldName;
-    }
-    // Replace old field name with new field name in `ui:order` array
-    const uiOrderFieldIndex = formDefinition.stepDefinitions[activeStep].uiSchema["ui:order"]?.indexOf(fieldName);
-    if (uiOrderFieldIndex !== undefined && uiOrderFieldIndex !== -1) {
-      // @ts-expect-error: For some reason, even though we do undefined check, ts compiler shows error
-      formDefinition.stepDefinitions[activeStep].uiSchema["ui:order"][uiOrderFieldIndex] = (
-        formData as { fieldName: string }
-      ).fieldName;
     }
   }
 
-  return { schema: fieldSchema, uiSchema: fieldUiSchema, requiredFields: newRequiredFields };
+  // handle renaming field
+  if (newFieldName !== originalFieldName) {
+    const idx = newRequiredFields.indexOf(originalFieldName);
+    if (idx !== -1) {
+      newRequiredFields[idx] = newFieldName;
+    }
+
+    const orderIndex = uiOrder?.indexOf(originalFieldName);
+    if (uiOrder && orderIndex !== undefined && orderIndex !== -1) {
+      uiOrder[orderIndex] = newFieldName;
+    }
+  }
+
+  return {
+    schema: updatedSchema,
+    uiSchema: updatedUiSchema,
+    requiredFields: newRequiredFields,
+  };
 };
 
 const editorSlice = createSlice({

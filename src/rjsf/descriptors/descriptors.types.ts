@@ -10,5 +10,4 @@ export interface Descriptor {
 export interface PropertiesConfiguration {
   dataSchema: JSONSchema7;
   uiSchema: UiSchema;
-  fieldsOfUiOptions?: string[];
 }
