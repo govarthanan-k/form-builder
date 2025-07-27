@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { useAppDispatch, useAppSelector } from "@/rtk/app/hooks";
-import { switchAutoSave, switchDevMode } from "@/rtk/features";
+import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
+import { switchAutoSave, switchDevMode } from "@/store/features";
 import { Save, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 

@@ -2,8 +2,8 @@
 
 import "@rjsf/core";
 
-import { useAppDispatch, useAppSelector } from "@/rtk/app/hooks";
-import { deleteField, updateSelectedField } from "@/rtk/features";
+import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
+import { deleteField, updateSelectedField } from "@/store/features";
 import { handleKey } from "@/utils";
 import { getDefaultRegistry } from "@rjsf/core";
 import { FieldTemplateProps } from "@rjsf/utils";

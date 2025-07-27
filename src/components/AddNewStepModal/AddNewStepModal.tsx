@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 
 import { ErrorListTemplate } from "@/rjsf/templates/ErrorListTemplate";
-import { useAppDispatch, useAppSelector } from "@/rtk/app/hooks";
-import { addStep, updateAddStepModalOpen } from "@/rtk/features";
+import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
+import { addStep, updateAddStepModalOpen } from "@/store/features";
 import { transformErrors } from "@/utils";
 import RJSFForm, { IChangeEvent } from "@rjsf/core";
 import Form from "@rjsf/shadcn";

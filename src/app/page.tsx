@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import { useAppDispatch } from "@/rtk/app/hooks";
-import { addField } from "@/rtk/features";
+import { useAppDispatch } from "@/store/app/hooks";
+import { addField } from "@/store/features";
 import { DndContext } from "@dnd-kit/core";
 
 import { FieldType, LeftPanel } from "@/components/LeftPanel";

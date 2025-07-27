@@ -1,8 +1,8 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/rtk/app/hooks";
-import { updateActiveTabInRightPanel } from "@/rtk/features";
-import { FormDefinition, RightPanelTab } from "@/rtk/features/editor/editor.types";
+import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
+import { updateActiveTabInRightPanel } from "@/store/features";
+import { FormDefinition, RightPanelTab } from "@/store/features/editor/editor.types";
 import { JSONSchema7 } from "json-schema";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

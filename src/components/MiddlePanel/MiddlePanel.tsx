@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import { useAppDispatch, useAppSelector } from "@/rtk/app/hooks";
-import { updateActiveStep, updateAddStepModalOpen } from "@/rtk/features";
+import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
+import { updateActiveStep, updateAddStepModalOpen } from "@/store/features";
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";

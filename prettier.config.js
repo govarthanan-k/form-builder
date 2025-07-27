@@ -35,7 +35,7 @@ module.exports = {
 
     // 5. Third-party adapters/framework logic
     "^@/rjsf$",
-    "^@/rtk$",
+    "^@/store$",
     "",
 
     // 6. UI components

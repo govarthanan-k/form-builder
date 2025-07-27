@@ -1,4 +1,4 @@
-import { FormDefinition } from "@/rtk/features/editor/editor.types";
+import { FormDefinition } from "@/store/features/editor/editor.types";
 
 export interface GetPropertiesSchemaArgs {
   formDefinition: FormDefinition;
