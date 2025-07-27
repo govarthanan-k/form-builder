@@ -1,24 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
+import { useAppDispatch } from "@/rtk/app/hooks";
+import { addField } from "@/rtk/features";
 import { DndContext } from "@dnd-kit/core";
-import { UiSchema } from "@rjsf/utils";
-import { JSONSchema7 } from "json-schema";
 
-import { FieldType, LeftSideBar } from "@/components/LeftSideBar";
-import { RightSideBar } from "@/components/RightSideBar";
-
-import { MiddlePanel } from "../components/MiddlePanel";
-import { useAppDispatch } from "../rtk/app/hooks";
-import { addField } from "../rtk/features";
-
-export interface FormSchema {
-  dataSchema: JSONSchema7;
-  uiSchema: UiSchema;
-}
+import { FieldType, LeftPanel } from "@/components/LeftPanel";
+import { MiddlePanel } from "@/components/MiddlePanel";
+import { RightPanel } from "@/components/RightPanel";
 
 export default function EFormDesigner() {
   const [isClient, setIsClient] = useState(false);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -31,6 +25,7 @@ export default function EFormDesigner() {
     <DndContext
       onDragEnd={(event) => {
         const fieldType = event.active.id as FieldType;
+
         const isDrop = event.over?.id === "drop-zone";
         if (isDrop) {
           // addField
@@ -40,7 +35,7 @@ export default function EFormDesigner() {
     >
       <div className="flex items-start" style={{ height: "calc(100vh - 88px)" }}>
         <div className="flex w-1/6 items-center justify-center rounded-md border border-gray-400">
-          <LeftSideBar />
+          <LeftPanel />
         </div>
         <div
           className="flex flex-1 items-center justify-center rounded-md border border-gray-400"
@@ -49,7 +44,7 @@ export default function EFormDesigner() {
           <MiddlePanel />
         </div>
         <div className="flex w-2/8 items-center justify-center rounded-md border border-gray-400">
-          <RightSideBar />
+          <RightPanel />
         </div>
       </div>
     </DndContext>

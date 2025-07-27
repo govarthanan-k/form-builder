@@ -1,5 +1,5 @@
 {
-  "name": "dashboard",
+  "name": "form-builder",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -81,6 +81,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.4.2",
+    "eslint-plugin-sort-destructure-keys": "^2.0.0",
+    "eslint-plugin-sort-exports": "^0.9.1",
     "husky": "^9.1.7",
     "prettier": "^3.6.1",
     "prettier-plugin-tailwindcss": "^0.6.13",

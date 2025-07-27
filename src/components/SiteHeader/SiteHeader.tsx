@@ -2,6 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
+
+import { useAppDispatch, useAppSelector } from "@/rtk/app/hooks";
+import { switchAutoSave, switchDevMode } from "@/rtk/features";
 import { Save, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 
@@ -16,14 +19,13 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Switch } from "@/components/ui/switch";
-
-import { useAppDispatch, useAppSelector } from "../../rtk/app/hooks";
-import { switchAutoSave, switchDevMode } from "../../rtk/features";
-import { ThemeToggle } from "../ThemeToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const SiteHeader = () => {
   const { autoSave, devMode } = useAppSelector((state) => state.editor);
+
   const dispatch = useAppDispatch();
+
   return (
     <header className="sticky top-0 z-50 w-full border-b px-4 py-3 backdrop-blur-md">
       <div className="flex items-stretch px-5">

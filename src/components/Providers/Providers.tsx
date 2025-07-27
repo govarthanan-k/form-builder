@@ -1,10 +1,9 @@
 "use client";
 
+import { store } from "@/rtk/app/store";
 import { Provider } from "react-redux";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
-
-import { store } from "../../rtk/app/store";
 
 export const Providers = ({ children }: React.PropsWithChildren) => {
   return (

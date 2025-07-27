@@ -1,4 +1,4 @@
-import { Descriptor } from ".";
+import { Descriptor } from "./descriptors.types";
 
 export const dropdownFieldDescriptor: Descriptor = {
   dataSchema: {
@@ -36,3 +36,7 @@ export const dropdownFieldDescriptor: Descriptor = {
     fieldsOfUiOptions: ["fieldType", "description"],
   },
 };
+
+export const f1 = () => {};
+
+export const f2 = () => {};

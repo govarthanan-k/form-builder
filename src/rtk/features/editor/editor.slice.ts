@@ -1,11 +1,13 @@
+import { descriptors } from "@/rjsf/descriptors";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UIOptionsType, UiSchema } from "@rjsf/utils";
 import { castDraft } from "immer";
 import { JSONSchema7, JSONSchema7Definition } from "json-schema";
 
-import { ROOT_EFORM_ID_PREFIX } from "../../../components/FormInTheMiddle";
-import { FieldType } from "../../../components/LeftSideBar";
-import { descriptors } from "../../../rjsf/descriptors";
+import { ROOT_EFORM_ID_PREFIX } from "@/constants";
+
+import { FieldType } from "@/components/LeftPanel";
+
 import { EditorState, FormData, FormDefinition, RightPanelTab, StepDefinition } from "./editor.types";
 
 const getEmptyStepDefinition = (stepType?: "Step" | "Summary" | "ThankYou", stepName?: string): StepDefinition => {
@@ -51,9 +53,9 @@ export const generateUniqueFieldName = (
 };
 
 const mapFieldSchemasToFormData = ({
+  activeStep,
   fieldName,
   formDefinition,
-  activeStep,
 }: {
   fieldName: string;
   formDefinition: FormDefinition;
@@ -77,10 +79,10 @@ const mapFieldSchemasToFormData = ({
 };
 
 const mapFormDataToFieldSchemas = ({
+  activeStep,
   fieldName,
   formData,
   formDefinition,
-  activeStep,
 }: {
   fieldName: string;
   formData: FormData;
@@ -99,6 +101,7 @@ const mapFormDataToFieldSchemas = ({
     const { fieldsOfUiOptions } = descriptors[fieldType].propertiesConfiguration;
 
     const newUiOptions: UIOptionsType = {};
+
     const newSchemaProps: Record<string, string> = {};
 
     Object.entries(formData).forEach(([key, value]) => {
@@ -144,6 +147,7 @@ const mapFormDataToFieldSchemas = ({
       ).fieldName;
     }
   }
+
   return { schema: fieldSchema, uiSchema: fieldUiSchema, requiredFields: newRequiredFields };
 };
 
@@ -181,6 +185,7 @@ const editorSlice = createSlice({
       step.schema.properties ??= {};
 
       const existingFields = step.schema.properties;
+
       const newFieldName = generateUniqueFieldName(existingFields, action.payload.fieldType);
 
       existingFields[newFieldName] = { ...dataSchema };
@@ -215,9 +220,9 @@ const editorSlice = createSlice({
         state.selectedFieldPropertiesFormData = { ...action.payload.formData };
         if (state.selectedField) {
           const {
+            requiredFields: newRequiredFields,
             schema: newSchema,
             uiSchema: newUiSchema,
-            requiredFields: newRequiredFields,
           } = mapFormDataToFieldSchemas({
             activeStep: state.activeStep,
             fieldName: state.selectedField as string,
@@ -262,16 +267,17 @@ const editorSlice = createSlice({
 });
 
 export const {
-  addStep,
-  updateAddStepModalOpen,
-  updateSelectedFieldPropertiesFormData,
-  updateFormData,
-  updateActiveStep,
-  deleteField,
   addField,
-  updateActiveTabInRightPanel,
+  addStep,
+  deleteField,
   switchAutoSave,
-  updateSelectedField,
   switchDevMode,
+  updateActiveStep,
+  updateActiveTabInRightPanel,
+  updateAddStepModalOpen,
+  updateFormData,
+  updateSelectedField,
+  updateSelectedFieldPropertiesFormData,
 } = editorSlice.actions;
+
 export const editorReducer = editorSlice.reducer;

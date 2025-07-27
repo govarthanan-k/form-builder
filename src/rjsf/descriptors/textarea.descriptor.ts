@@ -1,4 +1,4 @@
-import { Descriptor } from ".";
+import { Descriptor } from "./descriptors.types";
 
 export const textareaFieldDescriptor: Descriptor = {
   dataSchema: {
