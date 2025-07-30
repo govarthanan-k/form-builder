@@ -1,10 +1,7 @@
 import { UiSchema } from "@rjsf/utils";
-import { Operation } from "fast-json-patch";
 import { JSONSchema7 } from "json-schema";
 
 export interface CustomPatch {
-  op: Operation["op"];
-  path: Operation["path"];
   type: "schema" | "uiSchema" | "meta";
 }
 

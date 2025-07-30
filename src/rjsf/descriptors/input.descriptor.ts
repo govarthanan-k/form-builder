@@ -62,13 +62,11 @@ export const inputFieldDescriptor: Descriptor = {
       hidden: { "ui:options": {} },
     },
     patches: {
-      type: { op: "replace", path: "type", type: "schema" },
-      fieldType: { op: "replace", path: "fieldType", type: "uiSchema" },
-      fieldName: { op: "replace", path: "fieldName", type: "meta" },
-      title: { op: "replace", path: "title", type: "schema" },
-      description: { op: "replace", path: "description", type: "uiSchema" },
-      required: { op: "replace", path: "required", type: "meta" },
-      hidden: { op: "replace", path: "hidden", type: "uiSchema" },
+      type: { type: "schema" },
+      fieldType: { type: "uiSchema" },
+      title: { type: "schema" },
+      description: { type: "uiSchema" },
+      hidden: { type: "uiSchema" },
     },
   },
 };

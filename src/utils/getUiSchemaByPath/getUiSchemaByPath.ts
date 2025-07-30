@@ -1,25 +1,28 @@
 import { UiSchema } from "@rjsf/utils";
 
-import { getJsonValue } from "../getJsonValue";
 import { GetUiSchemaByPathArgs } from "./getUiSchemaByPath.types";
 
-export const buildUiJsonPath = (path: string): string => {
-  return path
-    .split(".")
-    .map((part) => {
-      const match = part.match(/^(\w+)\[(\d+)\]$/);
-      if (match) {
-        return `${match[1]}.items`;
-      }
+export const getUiSchemaByPath = ({ getParent = false, path, uiSchema }: GetUiSchemaByPathArgs): UiSchema | undefined => {
+  if (!uiSchema || typeof uiSchema !== "object") return undefined;
 
-      return part;
-    })
-    .join(".");
-};
+  const segments = path.replace(/\[(\d+)\]/g, ".$1").split(".");
+  const pathSegments = getParent ? segments.slice(0, -1) : segments;
 
-export const getUiSchemaByPath = ({ path, uiSchema }: GetUiSchemaByPathArgs): UiSchema | undefined => {
-  const normalizedPath = buildUiJsonPath(path);
-  const jsonPath = `$.${normalizedPath}`;
+  let current: UiSchema = uiSchema;
 
-  return getJsonValue<UiSchema | undefined>({ obj: uiSchema, path: jsonPath });
+  for (const segment of pathSegments) {
+    const index = parseInt(segment, 10);
+
+    if (!isNaN(index)) {
+      current = Array.isArray(current.items)
+        ? (current.items[index] ?? current.additionalItems)
+        : (current.items ?? current.additionalItems);
+    } else {
+      current = typeof current[segment] === "object" ? current[segment] : current.items?.[segment];
+    }
+
+    if (!current) return undefined;
+  }
+
+  return current;
 };

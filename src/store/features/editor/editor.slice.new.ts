@@ -7,14 +7,13 @@ import { applyPatch as jsonApplyPatch } from "fast-json-patch";
 import type { Operation } from "fast-json-patch";
 import { JSONSchema7 } from "json-schema";
 
-import { getRequiredArrayByPath } from "@/utils/getRequiredArrayByPath";
-import { getUiOrderByPath } from "@/utils/getUiOrderByPath";
-import { FORM_ID_PREFIXES, RightPanelTabs } from "@/constants";
-
 import { FieldType } from "@/components/LeftPanel";
 
+import { getRequiredArrayByPath } from "@/utils/getRequiredArrayByPath";
+import { FORM_ID_PREFIXES, RightPanelTabs } from "@/constants";
+
 import { mapFormDataToFieldSchemas } from "./editor.slice";
-import { FormData, FormDefinition, RightPanelTab } from "./editor.types";
+import { FormData, FormDefinition, RightPanelTab, StepDefinition } from "./editor.types";
 
 interface EditorState {
   selectedFieldPath?: string;
@@ -158,67 +157,73 @@ export const mapFieldSchemasToPropertiesFormData = ({
  * Converts flat formData back into schema + uiSchema using only descriptor patches.
  */
 export const mapPropertiesFormDataToFieldSchemas = ({
-  activeStep,
-  formDefinition,
-  originalFieldPath,
+  fieldPath,
   propertiesFormData,
+  stepDefinition,
 }: {
-  originalFieldPath: string;
-  formDefinition: FormDefinition;
-  activeStep: number;
+  fieldPath: string;
+  stepDefinition: StepDefinition;
   propertiesFormData: FormData;
   fieldName: string;
-}): {
-  schema: JSONSchema7;
-  uiSchema: UiSchema;
-  required: string[];
-  uiOrder: string[];
-} => {
-  const oldFieldName = originalFieldPath.split(".").pop();
+}): StepDefinition => {
+  const oldFieldName = fieldPath.split(".").pop() as string;
   const newFieldName = (propertiesFormData as { fieldName: string }).fieldName;
 
-  const stepDefinition = formDefinition.stepDefinitions[activeStep];
+  const parentUiSchema = getUiSchemaByPath({ path: fieldPath, uiSchema: stepDefinition.uiSchema, getParent: true });
+  const fieldUiSchema = getUiSchemaByPath({ path: fieldPath, uiSchema: stepDefinition.uiSchema, getParent: false });
 
-  const fieldUiSchema = getUiSchemaByPath({ path: originalFieldPath, uiSchema: stepDefinition.uiSchema });
-  const fieldSchema = getSchemaByPath({ path: originalFieldPath, schema: stepDefinition.schema });
-  const requiredFields = getRequiredArrayByPath({ path: originalFieldPath, schema: stepDefinition.schema });
+  const parentSchema = getSchemaByPath({ path: fieldPath, schema: stepDefinition.schema, getParent: true });
+  const fieldSchema = getSchemaByPath({ path: fieldPath, schema: stepDefinition.schema, getParent: false });
+
+  if (parentUiSchema === undefined || fieldUiSchema === undefined || parentSchema === undefined || fieldSchema === undefined) {
+    throw new Error("Error");
+  }
+  let requiredFields = parentSchema?.required ?? [];
+  const uiOrder = parentUiSchema?.["ui:order"] ?? ["*"];
+
   const hidden = isFieldHidden(fieldUiSchema);
-  const uiOrder = getUiOrderByPath({ path: originalFieldPath, uiSchema: stepDefinition.uiSchema });
 
   const fieldType: FieldType | undefined = fieldUiSchema?.["ui:options"]?.fieldType;
   if (!fieldType) {
-    throw new Error(`Missing fieldType for field: ${originalFieldPath}`);
+    throw new Error(`Missing fieldType for field: ${fieldPath}`);
   }
   const descriptor = descriptors[fieldType];
 
-  let updatedFieldSchema: JSONSchema7 = {};
-  let updatedFieldUiSchema: UiSchema = {};
-  let newRequiredFields: string[] = [];
-  let newUiOrder: string[] = [];
-
-  for (const [fieldKey, value] of Object.entries(propertiesFormData)) {
-    const patch = descriptor.propertiesConfiguration.patches[fieldKey];
-    const 
+  const fieldPatches = descriptor.propertiesConfiguration.patches;
+  for (const property of Object.keys(descriptor.propertiesConfiguration.dataSchema)) {
+    const value = (propertiesFormData as Record<string, unknown>)[property];
+    if (property === "required") {
+      if (value) {
+        requiredFields.push(oldFieldName);
+      } else {
+        requiredFields = requiredFields.filter((f) => f !== oldFieldName);
+      }
+    } else if (property !== "fieldName") {
+      const { type } = fieldPatches[property];
+      if (type === "schema") {
+        fieldSchema[property] = value;
+      } else if (type === "uiSchema") {
+        fieldUiSchema["ui:options"] = { ...fieldUiSchema["ui:options"], [property]: value };
+      }
+    }
   }
 
   // handle renaming field
-  if (newFieldName !== originalFieldName) {
-    const idx = newRequiredFields.indexOf(originalFieldName);
-    if (idx !== -1) {
-      newRequiredFields[idx] = newFieldName;
+  if (newFieldName !== oldFieldName) {
+    // required array
+    const requiredIndex = requiredFields.indexOf(oldFieldName);
+    if (requiredIndex !== -1) {
+      requiredFields[requiredIndex] = newFieldName;
     }
 
-    const orderIndex = uiOrder?.indexOf(originalFieldName);
+    // ui:order array
+    const orderIndex = uiOrder?.indexOf(oldFieldName);
     if (uiOrder && orderIndex !== undefined && orderIndex !== -1) {
       uiOrder[orderIndex] = newFieldName;
     }
   }
 
-  return {
-    schema: updatedSchema,
-    uiSchema: updatedUiSchema,
-    requiredFields: newRequiredFields,
-  };
+  return stepDefinition;
 };
 
 export const removePrefixesFromFieldPath = (path: string) => {
