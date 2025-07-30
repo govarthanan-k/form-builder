@@ -29,11 +29,16 @@ export const inputFieldDescriptor: Descriptor = {
           type: "string",
           title: "Description",
         },
+        default: {
+          type: "string",
+          title: "Default Value",
+        },
         required: {
           type: "boolean",
           title: "Required?",
         },
         hidden: { type: "boolean", title: "Hidden?" },
+        readOnly: { type: "boolean", title: "Read Only?" },
       },
     },
     uiSchema: {
@@ -54,6 +59,9 @@ export const inputFieldDescriptor: Descriptor = {
         "ui:options": {},
       },
     },
-    fieldsOfUiOptions: ["fieldType", "description", "hidden"],
+    mappings: {
+      schema: ["title", "description", "default", "readOnly"],
+      uiSchema: ["hidden"],
+    },
   },
 };

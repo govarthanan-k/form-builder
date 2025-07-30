@@ -32,6 +32,9 @@ export const checkboxFieldDescriptor: Descriptor = {
         "ui:options": {},
       },
     },
-    fieldsOfUiOptions: ["fieldType", "description"],
+    mappings: {
+      schema: ["title", "description", "default", "readOnly", "required"],
+      uiSchema: ["hidden"],
+    },
   },
 };

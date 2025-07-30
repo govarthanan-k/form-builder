@@ -3,7 +3,7 @@
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import { updateActiveTabInRightPanel } from "@/store/features";
 import { FormDefinition, RightPanelTab } from "@/store/features/editor/editor.types";
-import { JSONSchema7 } from "json-schema";
+import { getSchemaFromDotPath } from "@/utils";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -20,7 +20,12 @@ const getFieldNameFromFieldId = ({
   formDefinition: FormDefinition;
   activeStep: number;
 }): string => {
-  return (formDefinition.stepDefinitions[activeStep].schema.properties?.[fieldName] as JSONSchema7).title ?? "";
+  return (
+    getSchemaFromDotPath({
+      dotPath: fieldName,
+      schema: formDefinition.stepDefinitions[activeStep].schema,
+    })?.title ?? ""
+  );
 };
 
 export const RightPanel = () => {

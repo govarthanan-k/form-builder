@@ -3,14 +3,15 @@
 import { useEffect } from "react";
 
 import { descriptors } from "@/rjsf/descriptors";
-import { PropertiesConfiguration } from "@/rjsf/descriptors/descriptors.types";
 import { ErrorListTemplate } from "@/rjsf/templates/ErrorListTemplate";
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import { updateSelectedFieldPropertiesFormData } from "@/store/features";
-import { transformErrors } from "@/utils";
+import { getUiSchemaFromDotPath, transformErrors } from "@/utils";
 import { IChangeEvent } from "@rjsf/core";
 import Form from "@rjsf/shadcn";
+import { UiSchema } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
+import { JSONSchema7 } from "json-schema";
 
 import { FieldType } from "@/components/LeftPanel";
 
@@ -21,7 +22,7 @@ import { GetPropertiesSchemaArgs } from "./FieldPropertiesForm.types";
 export const FieldPropertiesForm = () => {
   const { activeStep, formDefinition, selectedField, selectedFieldPropertiesFormData } = useAppSelector((state) => state.editor);
   const dispatch = useAppDispatch();
-  const { dataSchema, uiSchema } = getPropertiesSchema({
+  const { schema, uiSchema } = getPropertiesSchema({
     formDefinition,
     activeStep,
     selectedField,
@@ -52,7 +53,7 @@ export const FieldPropertiesForm = () => {
 
   return (
     <Form
-      schema={dataSchema}
+      schema={schema}
       uiSchema={uiSchema}
       validator={validator}
       onChange={handleChange}
@@ -66,7 +67,7 @@ export const FieldPropertiesForm = () => {
       idPrefix={PROPERTIES_ROOT_EFORM_ID_PREFIX}
       className="flex flex-col gap-5"
       transformErrors={(error) => {
-        return transformErrors(error, dataSchema);
+        return transformErrors(error, schema);
       }}
     >
       <></>
@@ -78,15 +79,24 @@ export const getPropertiesSchema = ({
   activeStep,
   formDefinition,
   selectedField,
-}: GetPropertiesSchemaArgs): PropertiesConfiguration => {
-  if (selectedField && formDefinition.stepDefinitions[activeStep]?.uiSchema?.[selectedField]?.["ui:options"]?.fieldType) {
-    const fieldType = formDefinition.stepDefinitions[activeStep].uiSchema[selectedField]["ui:options"].fieldType as FieldType;
+}: GetPropertiesSchemaArgs): { schema: JSONSchema7; uiSchema: UiSchema } => {
+  if (selectedField) {
+    const stepDefinition = formDefinition.stepDefinitions[activeStep];
+    const fieldUiSchema = getUiSchemaFromDotPath({
+      dotPath: selectedField,
+      uiSchema: stepDefinition.uiSchema,
+    });
+    const fieldType = fieldUiSchema?.["ui:options"]?.fieldType as FieldType | undefined;
+    if (!fieldType) {
+      throw new Error(`fieldType is missing for ${selectedField}`);
+    }
+    const { dataSchema: schema, uiSchema } = descriptors[fieldType].propertiesConfiguration;
 
-    return { ...descriptors[fieldType].propertiesConfiguration };
+    return { schema, uiSchema };
   }
 
   return {
-    dataSchema: { type: "object", required: [], properties: {} },
+    schema: { type: "object", required: [], properties: {} },
     uiSchema: {},
   };
 };
