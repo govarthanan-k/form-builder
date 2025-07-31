@@ -1,8 +1,7 @@
 import { UiSchema } from "@rjsf/utils";
 import { JSONSchema7 } from "json-schema";
-import { Options } from "prettier";
 
-import { ArrayOptions } from "./schemaUtils.types";
+import { ArrayOptions, Options } from "./schemaUtils.types";
 
 export function getSchemaFromDotPath({
   dotPath,

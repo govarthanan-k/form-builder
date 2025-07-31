@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
-import { resetFormData, updateActiveStep, updateAddStepModalOpen } from "@/store/features";
+import { resetFormData, updateActiveStep, updateAddStepModalOpen, updateTemplatePreviewOpen } from "@/store/features";
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import Form from "@rjsf/shadcn";
+import validator from "@rjsf/validator-ajv8";
 import { ArrowRight, Plus, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,8 +20,11 @@ import { DropZone } from "@/components/DropZone";
 import { FormCanvas } from "@/components/FormCanvas";
 import { SortableStep } from "@/components/SortableStep";
 
+import { samplePreviewSchema } from "../LeftPanel";
+
 export const MiddlePanel = () => {
-  const { activeStep, formDefinition, isAddStepModalOpen } = useAppSelector((state) => state.editor);
+  const { activeStep, formDefinition, isAddStepModalOpen, isTemplatePreviewOpen, selectedFormTemplateForPreview } =
+    useAppSelector((state) => state.editor);
   const dispatch = useAppDispatch();
   const [items, setItems] = useState(formDefinition.stepDefinitions.map((s) => s.stepName));
   const sensors = useSensors(useSensor(PointerSensor));
@@ -61,17 +66,6 @@ export const MiddlePanel = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <Dialog open={isAddStepModalOpen} onOpenChange={(isOpen) => dispatch(updateAddStepModalOpen({ isOpen }))}>
-                <DialogContent className="sm:max-w-[500px]">
-                  <DialogHeader>
-                    <DialogTitle>Add New Step</DialogTitle>
-                    <DialogDescription>
-                      Please fill in the new step details and click &apos;Add&apos; to confirm.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <AddNewStepModal />
-                </DialogContent>
-              </Dialog>
             </CardHeader>
 
             <CardContent className="flex flex-col px-0">
@@ -134,6 +128,23 @@ export const MiddlePanel = () => {
           </Card>
         </div>
       </div>
+      <Dialog open={isAddStepModalOpen} onOpenChange={(isOpen) => dispatch(updateAddStepModalOpen({ isOpen }))}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add New Step</DialogTitle>
+            <DialogDescription>Please fill in the new step details and click &apos;Add&apos; to confirm.</DialogDescription>
+          </DialogHeader>
+          <AddNewStepModal />
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isTemplatePreviewOpen} onOpenChange={(isOpen) => dispatch(updateTemplatePreviewOpen({ isOpen }))}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Form Template Preview for {selectedFormTemplateForPreview}</DialogTitle>
+          </DialogHeader>
+          <Form schema={samplePreviewSchema} validator={validator} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

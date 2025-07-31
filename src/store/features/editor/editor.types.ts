@@ -18,6 +18,9 @@ export interface EditorState {
     rules?: Rule[];
   };
   isAddStepModalOpen: boolean;
+  isTemplatePreviewOpen?: boolean;
+  formTemplates: { name: string; lastModified: string; author: string; version: string }[];
+  selectedFormTemplateForPreview?: string;
 }
 
 export type FormData = Pick<IChangeEvent, "formData">;

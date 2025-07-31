@@ -1,8 +1,13 @@
 "use client";
 
-import { ChevronDown, ShieldCheck, ShieldOff, SquareCheck, Type } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
+import { updateTemplatePreviewOpen } from "@/store/features";
+import { JSONSchema7 } from "json-schema";
+import { ChevronDown, Eye, ShieldCheck, ShieldOff, SquareCheck, Type } from "lucide-react";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { DraggableItem } from "@/components/DraggableItem";
 import { InfoField } from "@/components/InfoField";
@@ -16,6 +21,9 @@ export const AVAILABLE_COMPONENTS = [
 ];
 
 export const LeftPanel = () => {
+  const { formTemplates } = useAppSelector((state) => state.editor);
+  const dispatch = useAppDispatch();
+
   return (
     <div className="w-full overflow-y-auto" style={{ height: "calc(100vh - 88px)" }}>
       <Accordion type="single" collapsible className="w-full p-2" defaultValue="item-3">
@@ -91,7 +99,72 @@ export const LeftPanel = () => {
             <TagInput noTagsMessage="No AD groups added yet" tags={[]} />
           </AccordionContent>
         </AccordionItem>
+
+        <AccordionItem value="item-5">
+          <AccordionTrigger className="text-base font-semibold">5. Templates</AccordionTrigger>
+          <AccordionContent className="bg-muted space-y-3 rounded-md p-4">
+            <div className="h-[500px] overflow-hidden rounded-xl border">
+              <ScrollArea className="h-full">
+                <div className="flex flex-col gap-3 p-4 pr-6">
+                  {formTemplates.map((form, idx) => (
+                    <Card
+                      key={idx}
+                      className="group bg-background hover:bg-accent cursor-pointer rounded-xl p-4 shadow-sm transition hover:border-blue-500"
+                      onClick={() => {
+                        dispatch(updateTemplatePreviewOpen({ isOpen: true, templateId: form.name }));
+                      }}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                          <h3 className="text-foreground group-hover:text-primary text-base font-semibold">{form.name}</h3>
+                          <p className="text-muted-foreground text-sm">
+                            Modified: <span className="font-medium">{form.lastModified}</span>
+                          </p>
+                          <p className="text-muted-foreground text-sm">
+                            Author: <span className="font-medium">{form.author}</span>
+                          </p>
+                          <p className="text-muted-foreground text-sm">
+                            Version: <span className="font-medium">{form.version}</span>
+                          </p>
+                        </div>
+                        <Eye className="text-muted-foreground group-hover:text-primary mt-1 h-4 w-4 shrink-0 cursor-pointer" />
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
     </div>
   );
+};
+
+export const samplePreviewSchema: JSONSchema7 = {
+  type: "object",
+  properties: {
+    firstName: {
+      type: "string",
+      title: "First name",
+    },
+    lastName: {
+      type: "string",
+      title: "Last name",
+    },
+    age: {
+      type: "integer",
+      title: "Age",
+    },
+    password: {
+      type: "string",
+      title: "Password",
+      minLength: 3,
+    },
+    telephone: {
+      type: "string",
+      title: "Telephone",
+      minLength: 10,
+    },
+  },
 };

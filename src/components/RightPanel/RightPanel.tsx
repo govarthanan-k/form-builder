@@ -11,6 +11,8 @@ import { FieldPropertiesForm } from "@/components/FieldPropertiesForm";
 import { JsonEditor } from "@/components/JsonEditor";
 import { StepProperties } from "@/components/StepProperties";
 
+import RuleBuilderApp from "../RulesBuilderNew";
+
 const getFieldNameFromFieldId = ({
   activeStep,
   fieldName,
@@ -119,14 +121,15 @@ export const RightPanel = () => {
           </Card>
         </TabsContent>
         <TabsContent value="Rules">
-          <Card>
+          <RuleBuilderApp />
+          {/* <Card>
             <CardContent className="grid gap-6">
               <h2 className="text-primary text-lg font-semibold">Step Rules</h2>
               <JsonEditor height="35vh" value={{}} />
               <h2 className="text-primary text-lg font-semibold">Form Rules</h2>
               <JsonEditor height="35vh" value={{}} />
             </CardContent>
-          </Card>
+          </Card> */}
         </TabsContent>
       </Tabs>
     </div>

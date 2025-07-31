@@ -8,10 +8,10 @@ import { actions } from "@/rjsf/rules/actions";
 import { ErrorListTemplate } from "@/rjsf/templates/ErrorListTemplate";
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import { updateSelectedFieldPropertiesFormData } from "@/store/features";
-import { getUiSchemaFromDotPath, transformErrors } from "@/utils";
+import { getSchemaFromDotPath, getUiSchemaFromDotPath, transformErrors } from "@/utils";
 import { IChangeEvent } from "@rjsf/core";
 import Form from "@rjsf/shadcn";
-import { UiSchema } from "@rjsf/utils";
+import { FormValidation, UiSchema } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import RulesEngine from "json-rules-engine-simplified";
 import { JSONSchema7 } from "json-schema";
@@ -24,6 +24,8 @@ import { GetPropertiesSchemaArgs } from "./FieldPropertiesForm.types";
 
 export const FieldPropertiesForm = () => {
   const {
+    activeStep,
+    formDefinition,
     inspectFieldSchemas = { schema: {}, uiSchema: {} },
     selectedField,
     selectedFieldPropertiesFormData,
@@ -82,6 +84,24 @@ export const FieldPropertiesForm = () => {
   if (!selectedField) return null;
 
   const handleChange = (e: IChangeEvent) => {
+    const exstingFieldsInSameLevel =
+      getSchemaFromDotPath({
+        dotPath: selectedField,
+        schema: formDefinition.stepDefinitions[activeStep].schema,
+        options: { parent: true },
+      })?.properties || {};
+    const existingFieldNames = Object.keys(exstingFieldsInSameLevel);
+
+    if (
+      selectedField.split(".").pop() !== (e.formData as unknown as { fieldName: string }).fieldName &&
+      existingFieldNames.includes((e.formData as unknown as { fieldName: string }).fieldName)
+    ) {
+      console.log("Field name already exists...");
+
+      return;
+    }
+
+    console.log("Errors => ", e);
     const formDataAfterRules = structuredClone(e.formData);
     console.log("formDataBeforeRules => ", formDataAfterRules);
     const engine = new RulesEngine();
@@ -111,12 +131,36 @@ export const FieldPropertiesForm = () => {
     });
   };
 
+  const customValidate = (formData: FormData, errors: FormValidation): FormValidation => {
+    const exstingFieldsInSameLevel =
+      getSchemaFromDotPath({
+        dotPath: selectedField,
+        schema: formDefinition.stepDefinitions[activeStep].schema,
+        options: { parent: true },
+      })?.properties || {};
+    const existingFieldNames = Object.keys(exstingFieldsInSameLevel);
+
+    console.log("In customValidate , existingFieldNames => ", existingFieldNames);
+    console.log("In customValidate , formData => ", formData);
+
+    if (
+      selectedField.split(".").pop() !== (formData as unknown as { fieldName: string }).fieldName &&
+      existingFieldNames.includes((formData as unknown as { fieldName: string }).fieldName)
+    ) {
+      errors.fieldName?.addError("Field name already exists");
+      console.log("Field name already exists...");
+    }
+
+    return errors;
+  };
+
   return (
     <Form
       schema={structuredClone(rulesModifiedSchema)}
       uiSchema={structuredClone(rulesModifiedUiSchema)}
       validator={validator}
       onChange={handleChange}
+      customValidate={customValidate}
       formData={selectedFieldPropertiesFormData}
       liveValidate
       noHtml5Validate
