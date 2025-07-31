@@ -5,10 +5,10 @@ export const inputFieldDescriptor: Descriptor = {
     type: "string",
     title: "New Input Field",
     default: "Gova",
+    description: "This is the field description",
   },
   uiSchema: {
     "ui:options": {
-      description: "This is the field description",
       fieldType: "input",
     },
   },
@@ -59,6 +59,19 @@ export const inputFieldDescriptor: Descriptor = {
         "ui:options": {},
       },
     },
+    rules: [
+      {
+        conditions: {
+          title: "empty",
+        },
+        event: {
+          type: "remove",
+          params: {
+            field: "description",
+          },
+        },
+      },
+    ],
     mappings: {
       schema: ["title", "description", "default", "readOnly"],
       uiSchema: ["hidden"],

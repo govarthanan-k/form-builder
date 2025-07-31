@@ -4,10 +4,10 @@ export const checkboxFieldDescriptor: Descriptor = {
   dataSchema: {
     type: "boolean",
     title: "New Checkbox Field",
+    description: "This is the field description",
   },
   uiSchema: {
     "ui:options": {
-      description: "This is the field description",
       fieldType: "checkbox",
     },
   },

@@ -1,3 +1,4 @@
+import { Rule } from "@/rjsf/descriptors/descriptors.types";
 import { IChangeEvent } from "@rjsf/core";
 import { UiSchema } from "@rjsf/utils";
 import { JSONSchema7 } from "json-schema";
@@ -6,12 +7,17 @@ export interface EditorState {
   selectedField?: string;
   devMode: boolean;
   autoSave: boolean;
-  activeTabInRightPanel?: RightPanelTab;
+  activeTabInRightPanel: RightPanelTab;
   activeStep: number;
   formDefinition: FormDefinition;
   formData: FormData;
-  selectedFieldPropertiesFormData?: FormData;
-  isAddStepModalOpen?: boolean;
+  selectedFieldPropertiesFormData: FormData;
+  inspectFieldSchemas?: {
+    schema: JSONSchema7;
+    uiSchema: UiSchema;
+    rules?: Rule[];
+  };
+  isAddStepModalOpen: boolean;
 }
 
 export type FormData = Pick<IChangeEvent, "formData">;

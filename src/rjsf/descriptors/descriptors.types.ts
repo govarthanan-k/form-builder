@@ -14,4 +14,11 @@ export interface PropertiesConfiguration {
     schema: string[];
     uiSchema: string[];
   };
+  rules?: Rule[];
+}
+
+export interface Rule {
+  conditions: object;
+  event: object;
+  priority?: number;
 }

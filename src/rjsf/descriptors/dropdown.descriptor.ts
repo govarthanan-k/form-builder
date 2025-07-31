@@ -5,10 +5,10 @@ export const dropdownFieldDescriptor: Descriptor = {
     type: "string",
     title: "New Dropdown Field",
     enum: ["Option 1", "Option 2", "Option 3"],
+    description: "This is the field description",
   },
   uiSchema: {
     "ui:options": {
-      description: "This is the field description",
       fieldType: "dropdown",
     },
   },

@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
-import { updateActiveStep, updateAddStepModalOpen } from "@/store/features";
+import { resetFormData, updateActiveStep, updateAddStepModalOpen } from "@/store/features";
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, Plus, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -118,6 +118,10 @@ export const MiddlePanel = () => {
                 <div className="flex gap-4">
                   <Button className="bg-green-600 text-white hover:bg-green-700">Save</Button>
                   <Button className="bg-blue-600 text-white hover:bg-blue-700">Submit</Button>
+                  <Button onClick={() => dispatch(resetFormData())} variant={"destructive"}>
+                    Reset Form
+                    <RefreshCw className="ml-2 h-4 w-4" />
+                  </Button>
                 </div>
 
                 {/* Right button */}

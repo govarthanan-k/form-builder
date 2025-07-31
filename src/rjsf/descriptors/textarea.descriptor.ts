@@ -4,11 +4,11 @@ export const textareaFieldDescriptor: Descriptor = {
   dataSchema: {
     type: "string",
     title: "New Textarea Field",
+    description: "This is the field description",
   },
   uiSchema: {
     "ui:widget": "textarea",
     "ui:options": {
-      description: "This is the field description",
       fieldType: "textarea",
     },
   },

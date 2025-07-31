@@ -10,8 +10,9 @@ import {
 } from "@/utils";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UiSchema } from "@rjsf/utils";
-import { castDraft } from "immer";
+import { castDraft, WritableDraft } from "immer";
 
+import { getPropertiesSchema } from "@/components/FieldPropertiesForm";
 import { FieldType } from "@/components/LeftPanel";
 
 import { ROOT_EFORM_ID_PREFIX } from "@/constants";
@@ -22,6 +23,9 @@ const initialState: EditorState = {
   activeStep: 0,
   autoSave: false,
   devMode: true,
+  activeTabInRightPanel: "Inspect",
+  selectedFieldPropertiesFormData: {},
+  isAddStepModalOpen: false,
   formDefinition: {
     stepDefinitions: [
       {
@@ -267,6 +271,18 @@ const editorSlice = createSlice({
         fieldName: selectedField,
         formDefinition: state.formDefinition,
       });
+
+      const { rules, schema, uiSchema } = getPropertiesSchema({
+        activeStep: state.activeStep,
+        formDefinition: state.formDefinition,
+        selectedField,
+      });
+
+      state.inspectFieldSchemas = {
+        schema,
+        uiSchema: structuredClone(uiSchema) as WritableDraft<UiSchema>,
+        rules,
+      };
     }),
 
     switchDevMode: create.reducer((state) => {
@@ -314,6 +330,10 @@ const editorSlice = createSlice({
 
     updateFormData: create.reducer((state, action: PayloadAction<{ formData: FormData }>) => {
       state.formData = { ...action.payload.formData };
+    }),
+
+    resetFormData: create.reducer((state) => {
+      state.formData = {};
     }),
 
     updateSelectedFieldPropertiesFormData: create.reducer(
@@ -388,7 +408,7 @@ const editorSlice = createSlice({
         console.log("configProperties ", configProperties);
 
         for (const propertyKey of Object.keys(configProperties)) {
-          console.log("Checking ", propertyKey);
+          console.log(`Checking ${propertyKey} => ${action.payload.formData[propertyKey]}`);
           if (propertyKey === "fieldName") {
             // DO nothing
           } else {
@@ -405,16 +425,21 @@ const editorSlice = createSlice({
 
             // Schema fields
             else if (schemaConfigProperties.includes(propertyKey)) {
+              console.log(`Updating ${propertyKey} => ${action.payload.formData[propertyKey]} => in schema`);
               // @ts-expect-error - ToDo
               parentFieldSchema.properties[newFieldName][propertyKey] = action.payload.formData[propertyKey];
             }
 
             // UiOptions fields
             else if (uiSchemaConfigProperties.includes(propertyKey)) {
+              console.log(`Updating ${propertyKey} => ${action.payload.formData[propertyKey]} => in uiSchema`);
+
               parentFieldUiSchema[newFieldName]["ui:options"][propertyKey] = action.payload.formData[propertyKey];
             }
           }
         }
+        state.formData = {};
+        console.log("updated ui schema => ", JSON.stringify(parentFieldUiSchema[newFieldName], null, 4));
       }
     ),
 
@@ -430,6 +455,7 @@ const editorSlice = createSlice({
     addStep: create.reducer((state, action: PayloadAction<{ stepName: string; stepType: "Step" | "Summary" | "ThankYou" }>) => {
       const newStepDefinition = getEmptyStepDefinition(action.payload.stepType, action.payload.stepName);
       state.formDefinition.stepDefinitions.push(castDraft(newStepDefinition));
+      state.activeStep = state.formDefinition.stepDefinitions.length - 1;
     }),
   }),
 });
@@ -438,6 +464,7 @@ export const {
   addField,
   addStep,
   deleteField,
+  resetFormData,
   switchAutoSave,
   switchDevMode,
   updateActiveStep,
