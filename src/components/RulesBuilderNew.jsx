@@ -357,7 +357,7 @@ function RuleItem({ rule, ruleIndex, onChange, onDelete, fieldList, fieldIcons }
             className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
           >
             <Trash2 className="mr-1 h-4 w-4" />
-            Delete
+            Delete Rule
           </Button>
         </div>
 
@@ -416,7 +416,7 @@ function RuleItem({ rule, ruleIndex, onChange, onDelete, fieldList, fieldIcons }
   );
 }
 
-function ConditionEditor({ condition, onChange, depth = 0, fieldList, fieldIcons }) {
+function ConditionEditor({ condition, onChange, onDelete, depth = 0, fieldList, fieldIcons }) {
   const [type, setType] = useState(detectType(condition));
   const [collapsed, setCollapsed] = useState(false);
 
@@ -461,10 +461,24 @@ function ConditionEditor({ condition, onChange, depth = 0, fieldList, fieldIcons
 
     return (
       <div className="space-y-4 rounded-lg border p-4">
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-          <span className="font-medium">Condition</span>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+            <span className="font-medium">Condition</span>
+          </div>
+          {onDelete && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onDelete}
+              className="text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+            >
+              <Trash2 className="mr-1 h-4 w-4" />
+              Delete Condition
+            </Button>
+          )}
         </div>
+
         <div className="flex flex-wrap items-center gap-3">
           <div className="w-full">
             <label className="text-muted-foreground mb-2 block text-sm font-medium">Field:</label>
@@ -484,7 +498,7 @@ function ConditionEditor({ condition, onChange, depth = 0, fieldList, fieldIcons
 
           <div className="w-full">
             <label className="text-muted-foreground mb-2 block text-sm font-medium">Operator:</label>
-            <Select value={operator} onValueChange={(val) => handleFieldChange(field, val, value)} className="w-full">
+            <Select value={operator} onValueChange={(val) => handleFieldChange(field, val, value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Operator" />
               </SelectTrigger>
@@ -516,6 +530,7 @@ function ConditionEditor({ condition, onChange, depth = 0, fieldList, fieldIcons
             </div>
           )}
         </div>
+
         <div className="flex flex-wrap justify-center gap-1 border-t pt-2">
           <Button
             variant="ghost"
@@ -546,36 +561,50 @@ function ConditionEditor({ condition, onChange, depth = 0, fieldList, fieldIcons
     );
   }
 
+  // For logical groups: and, or, not
   const logicalKey = Object.keys(condition)[0];
   const group = logicalKey === "not" ? [condition[logicalKey]] : condition[logicalKey] || [];
   const groupSummary = generateGroupSummary(condition, fieldIcons);
 
   return (
     <div className="space-y-3">
-      <div
-        className="bg-muted hover:bg-muted/80 flex cursor-pointer items-center space-x-3 rounded-lg p-3 transition-colors"
-        onClick={() => setCollapsed(!collapsed)}
-      >
-        <ChevronRight
-          className={`h-5 w-5 transform transition-transform ${collapsed ? "" : "rotate-90"} text-muted-foreground`}
-        />
-        <div className="flex items-center gap-2">
-          <div
-            className={`h-3 w-3 rounded-full ${
-              logicalKey === "or"
-                ? "bg-orange-500"
-                : logicalKey === "and"
-                  ? "bg-green-500"
-                  : logicalKey === "not"
-                    ? "bg-purple-500"
-                    : "bg-blue-500"
-            }`}
-          ></div>
-          <span className="font-semibold">{logicalKey.toUpperCase()} Group</span>
-          <span className="text-muted-foreground text-sm">
-            ({group.length} condition{group.length !== 1 ? "s" : ""})
-          </span>
+      <div className="bg-muted hover:bg-muted/80 flex cursor-pointer items-center justify-between rounded-lg p-3 transition-colors">
+        <div className="flex items-center gap-3" onClick={() => setCollapsed(!collapsed)}>
+          <ChevronRight
+            className={`h-5 w-5 transform transition-transform ${collapsed ? "" : "rotate-90"} text-muted-foreground`}
+          />
+          <div className="flex items-center gap-2">
+            <div
+              className={`h-3 w-3 rounded-full ${
+                logicalKey === "or"
+                  ? "bg-orange-500"
+                  : logicalKey === "and"
+                    ? "bg-green-500"
+                    : logicalKey === "not"
+                      ? "bg-purple-500"
+                      : "bg-blue-500"
+              }`}
+            ></div>
+            <span className="font-semibold">{logicalKey.toUpperCase()} Group</span>
+            <span className="text-muted-foreground text-sm">
+              ({group.length} condition{group.length !== 1 ? "s" : ""})
+            </span>
+          </div>
         </div>
+        {onDelete && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+          >
+            <Trash2 className="mr-1 h-4 w-4" />
+            Delete Group
+          </Button>
+        )}
       </div>
 
       {collapsed ? (
@@ -611,21 +640,11 @@ function ConditionEditor({ condition, onChange, depth = 0, fieldList, fieldIcons
               <ConditionEditor
                 condition={cond}
                 onChange={(c) => (logicalKey === "not" ? onChange({ [logicalKey]: c }) : handleNestedChange(i, c))}
+                onDelete={logicalKey !== "not" ? () => deleteNestedCondition(i) : undefined}
                 depth={depth + 1}
                 fieldList={fieldList}
                 fieldIcons={fieldIcons}
               />
-              {logicalKey !== "not" && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => deleteNestedCondition(i)}
-                  className="text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
-                >
-                  <Trash2 className="mr-1 h-4 w-4" />
-                  Delete
-                </Button>
-              )}
             </div>
           ))}
           {logicalKey !== "not" && (
