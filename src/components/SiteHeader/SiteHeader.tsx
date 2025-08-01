@@ -21,8 +21,10 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
+import { createForm, updateForm } from "@/lib/apis";
+
 export const SiteHeader = () => {
-  const { autoSave, devMode } = useAppSelector((state) => state.editor);
+  const { autoSave, devMode, formDefinition } = useAppSelector((state) => state.editor);
   const dispatch = useAppDispatch();
 
   return (
@@ -73,12 +75,33 @@ export const SiteHeader = () => {
               disabled={autoSave}
               variant="secondary"
               size="sm"
-              onClick={() => alert("Saved!")}
+              onClick={async () => {
+                try {
+                  await createForm(formDefinition);
+                  toast.success("Create success");
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                } catch (error) {
+                  toast.error("Create failed");
+                }
+              }}
               className="bg-green-600 text-white hover:bg-green-700"
             >
-              <Save className="mr-1 h-4 w-4" /> Save
+              <Save className="mr-1 h-4 w-4" />
+              Save
             </Button>
-            <Button size="sm" onClick={() => alert("Published!")} className="bg-blue-600 text-white hover:bg-blue-700">
+            <Button
+              size="sm"
+              onClick={async () => {
+                try {
+                  await updateForm(formDefinition.formId, formDefinition);
+                  toast.success("Update success");
+                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                } catch (error) {
+                  toast.error("Update failed");
+                }
+              }}
+              className="bg-blue-600 text-white hover:bg-blue-700"
+            >
               <UploadCloud className="mr-1 h-4 w-4" /> Publish
             </Button>
           </div>

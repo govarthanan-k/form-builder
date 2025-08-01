@@ -116,6 +116,8 @@ const initialState: EditorState = {
   selectedFieldPropertiesFormData: {},
   isAddStepModalOpen: false,
   formDefinition: {
+    formId: "Account_Opening_Form",
+    formName: "Account Opening Form",
     stepDefinitions: [
       {
         isThankYouPage: false,

@@ -27,6 +27,8 @@ export interface EditorState {
 export type FormData = Pick<IChangeEvent, "formData">;
 
 export interface FormDefinition {
+  formId: string;
+  formName: string;
   stepDefinitions: StepDefinition[];
 }
 
