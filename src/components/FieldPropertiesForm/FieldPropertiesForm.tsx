@@ -7,6 +7,7 @@ import { Rule } from "@/rjsf/descriptors/descriptors.types";
 import { actions } from "@/rjsf/rules/actions";
 import { CustomFieldTemplate } from "@/rjsf/templates/CustomFieldTemplate";
 import { ErrorListTemplate } from "@/rjsf/templates/ErrorListTemplate";
+import ToggleWidget from "@/rjsf/widgets/ToggleWidget";
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import { updateSelectedFieldPropertiesFormData } from "@/store/features";
 import { getSchemaFromDotPath, getUiSchemaFromDotPath, transformErrors } from "@/utils";
@@ -183,6 +184,7 @@ export const FieldPropertiesForm = () => {
         ErrorListTemplate,
         FieldTemplate: CustomFieldTemplate,
       }}
+      widgets={{ CheckboxWidget: ToggleWidget }}
       idSeparator="."
       idPrefix={PROPERTIES_ROOT_EFORM_ID_PREFIX}
       className="flex flex-col gap-5"
