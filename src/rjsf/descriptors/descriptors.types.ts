@@ -7,11 +7,13 @@ export interface Descriptor {
   propertiesConfiguration: PropertiesConfiguration;
 }
 
+export type JSONSchema7Key = keyof JSONSchema7;
+
 export interface PropertiesConfiguration {
   dataSchema: JSONSchema7;
   uiSchema: UiSchema;
   mappings: {
-    schema: string[];
+    schema: JSONSchema7Key[];
     uiSchema: string[];
   };
   rules?: Rule[];

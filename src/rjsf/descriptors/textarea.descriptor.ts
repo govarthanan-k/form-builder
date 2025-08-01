@@ -15,11 +15,11 @@ export const textareaFieldDescriptor: Descriptor = {
   propertiesConfiguration: {
     dataSchema: {
       type: "object",
-      required: ["fieldName", "title"],
+      required: ["fieldID", "title"],
       properties: {
-        fieldName: {
+        fieldID: {
           type: "string",
-          title: "Field Name",
+          title: "Field ID",
         },
         title: {
           type: "string",
@@ -28,7 +28,7 @@ export const textareaFieldDescriptor: Descriptor = {
       },
     },
     uiSchema: {
-      fieldName: {
+      fieldID: {
         "ui:autofocus": true,
         "ui:options": {},
       },

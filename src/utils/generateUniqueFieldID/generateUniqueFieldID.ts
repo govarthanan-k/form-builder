@@ -1,6 +1,6 @@
-import { GenerateUniqueFieldNameArgs } from "./generateUniqueFieldName.types";
+import { GenerateUniqueFieldIDArgs } from "./generateUniqueFieldID.types";
 
-export const generateUniqueFieldName = ({ existingFields, padding = 2, prefix }: GenerateUniqueFieldNameArgs): string => {
+export const generateUniqueFieldID = ({ existingFields, padding = 2, prefix }: GenerateUniqueFieldIDArgs): string => {
   let index = 1;
   let newName = `${prefix}_${String(index).padStart(padding, "0")}`;
   while (newName in existingFields) {

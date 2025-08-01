@@ -1,6 +1,6 @@
 "use client";
 
-import { CustomFieldTemplate } from "@/rjsf/templates/CustomFieldTemplate";
+import { EditorCustomFieldTemplate } from "@/rjsf/templates/CustomFieldTemplate";
 import { ErrorListTemplate } from "@/rjsf/templates/ErrorListTemplate";
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import { updateFormData } from "@/store/features";
@@ -24,8 +24,8 @@ export const FormCanvas = (props: FormSchema) => {
   return (
     <Form
       formData={formData}
-      // liveOmit
-      // omitExtraData
+      liveOmit
+      omitExtraData
       schema={props.dataSchema}
       uiSchema={props.uiSchema}
       validator={validator}
@@ -34,7 +34,7 @@ export const FormCanvas = (props: FormSchema) => {
       noHtml5Validate
       templates={{
         ErrorListTemplate,
-        FieldTemplate: CustomFieldTemplate,
+        FieldTemplate: EditorCustomFieldTemplate,
       }}
       idSeparator="."
       idPrefix={ROOT_EFORM_ID_PREFIX}

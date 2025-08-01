@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { descriptors } from "@/rjsf/descriptors";
 import { Rule } from "@/rjsf/descriptors/descriptors.types";
 import { actions } from "@/rjsf/rules/actions";
+import { CustomFieldTemplate } from "@/rjsf/templates/CustomFieldTemplate";
 import { ErrorListTemplate } from "@/rjsf/templates/ErrorListTemplate";
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import { updateSelectedFieldPropertiesFormData } from "@/store/features";
@@ -90,13 +91,27 @@ export const FieldPropertiesForm = () => {
         schema: formDefinition.stepDefinitions[activeStep].schema,
         options: { parent: true },
       })?.properties || {};
-    const existingFieldNames = Object.keys(exstingFieldsInSameLevel);
+    const existingFieldIDs = Object.keys(exstingFieldsInSameLevel);
 
     if (
-      selectedField.split(".").pop() !== (e.formData as unknown as { fieldName: string }).fieldName &&
-      existingFieldNames.includes((e.formData as unknown as { fieldName: string }).fieldName)
+      (e.formData as unknown as { fieldID: string }).fieldID === undefined ||
+      (e.formData as unknown as { fieldID: string }).fieldID === ""
     ) {
-      console.log("Field name already exists...");
+      console.log("Field ID is empty...");
+
+      return;
+    }
+    if (
+      selectedField.split(".").pop() !== (e.formData as unknown as { fieldID: string }).fieldID &&
+      existingFieldIDs.includes((e.formData as unknown as { fieldID: string }).fieldID)
+    ) {
+      console.log("Field ID already exists...");
+
+      return;
+    }
+
+    if (!/^[A-Za-z]/.test((e.formData as unknown as { fieldID: string }).fieldID)) {
+      console.log("Field ID isn't starting with alphabet...");
 
       return;
     }
@@ -138,17 +153,17 @@ export const FieldPropertiesForm = () => {
         schema: formDefinition.stepDefinitions[activeStep].schema,
         options: { parent: true },
       })?.properties || {};
-    const existingFieldNames = Object.keys(exstingFieldsInSameLevel);
+    const existingFieldIDs = Object.keys(exstingFieldsInSameLevel);
 
-    console.log("In customValidate , existingFieldNames => ", existingFieldNames);
+    console.log("In customValidate , existingFieldIDs => ", existingFieldIDs);
     console.log("In customValidate , formData => ", formData);
 
     if (
-      selectedField.split(".").pop() !== (formData as unknown as { fieldName: string }).fieldName &&
-      existingFieldNames.includes((formData as unknown as { fieldName: string }).fieldName)
+      selectedField.split(".").pop() !== (formData as unknown as { fieldID: string }).fieldID &&
+      existingFieldIDs.includes((formData as unknown as { fieldID: string }).fieldID)
     ) {
-      errors.fieldName?.addError("Field name already exists");
-      console.log("Field name already exists...");
+      errors.fieldID?.addError("Field ID already exists");
+      console.log("Field ID already exists...");
     }
 
     return errors;
@@ -166,6 +181,7 @@ export const FieldPropertiesForm = () => {
       noHtml5Validate
       templates={{
         ErrorListTemplate,
+        FieldTemplate: CustomFieldTemplate,
       }}
       idSeparator="."
       idPrefix={PROPERTIES_ROOT_EFORM_ID_PREFIX}

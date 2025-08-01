@@ -30,7 +30,7 @@ export const SiteHeader = () => {
       <div className="flex items-stretch px-5">
         <div className="flex w-1/5 items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <Image src="/logo.svg" alt="Natwest Logo" width={174} height={50} />
+            <Image src="/logo.svg" alt="Logo" width={174} height={50} />
             <span className="text-lg font-semibold">eForms - Designer</span>
           </Link>
         </div>

@@ -1,6 +1,6 @@
 import { descriptors } from "@/rjsf/descriptors";
 import {
-  generateUniqueFieldName,
+  generateUniqueFieldID,
   getEmptyStepDefinition,
   getSchemaFromDotPath,
   getUiSchemaFromDotPath,
@@ -200,7 +200,6 @@ const initialState: EditorState = {
         uiSchema: {
           "ui:order": ["firstName", "lastName", "age", "bio", "password", "telephone", "personalDetails", "list"],
           firstName: {
-            "ui:autofocus": true,
             "ui:emptyValue": "",
             "ui:placeholder": "ui:emptyValue causes this field to always be valid despite being required",
             "ui:autocomplete": "family-name",
@@ -307,23 +306,23 @@ const initialState: EditorState = {
 
 const mapFieldSchemasToFormData = ({
   activeStep,
-  fieldName,
+  fieldID,
   formDefinition,
 }: {
-  fieldName: string;
+  fieldID: string;
   formDefinition: FormDefinition;
   activeStep: number;
 }): FormData => {
   const { schema: stepSchema, uiSchema: stepUiSchema } = formDefinition.stepDefinitions[activeStep];
   const fieldSchema = getSchemaFromDotPath({
-    dotPath: fieldName,
+    dotPath: fieldID,
     schema: stepSchema,
     options: { parent: false },
   });
   console.log("fieldSchema => ", JSON.stringify(fieldSchema, null, 4));
 
   const fieldUiSchema = getUiSchemaFromDotPath({
-    dotPath: fieldName,
+    dotPath: fieldID,
     uiSchema: stepUiSchema,
     options: { parent: false },
   });
@@ -331,9 +330,9 @@ const mapFieldSchemasToFormData = ({
   const formData = {
     ...fieldSchema,
     ...fieldUiSchema?.["ui:options"],
-    fieldName: fieldName.split(".").pop(),
+    fieldID: fieldID.split(".").pop(),
     // To do - This is not correct. Get required [] of parent and then check
-    required: formDefinition.stepDefinitions[activeStep].schema.required?.includes(fieldName),
+    required: formDefinition.stepDefinitions[activeStep].schema.required?.includes(fieldID),
     hidden:
       fieldUiSchema?.["ui:widget"] === "hidden" ||
       fieldUiSchema?.["ui:field"] === "hidden" ||
@@ -357,7 +356,7 @@ const editorSlice = createSlice({
       state.activeTabInRightPanel = "Inspect";
       state.selectedFieldPropertiesFormData = mapFieldSchemasToFormData({
         activeStep: state.activeStep,
-        fieldName: selectedField,
+        fieldID: selectedField,
         formDefinition: state.formDefinition,
       });
 
@@ -392,12 +391,12 @@ const editorSlice = createSlice({
       const step = state.formDefinition.stepDefinitions[state.activeStep];
       step.schema.properties ??= {};
       const existingFields = step.schema.properties;
-      const newFieldName = generateUniqueFieldName({ existingFields, prefix: action.payload.fieldType });
-      existingFields[newFieldName] = { ...dataSchema };
-      step.uiSchema[newFieldName] = { ...uiSchema };
-      step.uiSchema["ui:order"] = [...(step.uiSchema["ui:order"] ?? []), newFieldName];
+      const newFieldID = generateUniqueFieldID({ existingFields, prefix: action.payload.fieldType });
+      existingFields[newFieldID] = { ...dataSchema };
+      step.uiSchema[newFieldID] = { ...uiSchema };
+      step.uiSchema["ui:order"] = [...(step.uiSchema["ui:order"] ?? []), newFieldID];
       // Todo - Remove this later
-      step.schema.required = [...(step.schema.required || []), newFieldName];
+      step.schema.required = [...(step.schema.required || []), newFieldID];
     }),
 
     deleteField: create.reducer((state, action: PayloadAction<{ fieldId: string }>) => {
@@ -436,11 +435,11 @@ const editorSlice = createSlice({
         }
 
         const parts = oldFieldPath.split(".");
-        const oldFieldName = parts.at(-1);
-        const newFieldName = action.payload.formData.fieldName as string;
+        const oldFieldID = parts.at(-1);
+        const newFieldID = action.payload.formData.fieldID as string;
 
-        if (!oldFieldName || !newFieldName) {
-          throw new Error("field name is missing.");
+        if (!oldFieldID || !newFieldID) {
+          throw new Error("field ID is missing.");
         }
 
         const { schema: stepSchema, uiSchema: stepUiSchema } = state.formDefinition.stepDefinitions[state.activeStep];
@@ -465,20 +464,20 @@ const editorSlice = createSlice({
         }
 
         // Rename flow
-        if (oldFieldName !== newFieldName) {
-          const newFieldPath = [...parts.slice(0, -1), newFieldName].join(".");
-          replace(parentFieldSchema?.required, oldFieldName, newFieldName, { mutate: true, unique: true });
-          replace(parentFieldUiSchema?.["ui:order"], oldFieldName, newFieldName, { mutate: true, unique: true });
-          parentFieldUiSchema[newFieldName] = parentFieldUiSchema[oldFieldName] as UiSchema;
-          parentFieldSchema.properties[newFieldName] = parentFieldSchema.properties[oldFieldName];
-          delete parentFieldUiSchema[oldFieldName];
-          delete parentFieldSchema.properties[oldFieldName];
+        if (oldFieldID !== newFieldID) {
+          const newFieldPath = [...parts.slice(0, -1), newFieldID].join(".");
+          replace(parentFieldSchema?.required, oldFieldID, newFieldID, { mutate: true, unique: true });
+          replace(parentFieldUiSchema?.["ui:order"], oldFieldID, newFieldID, { mutate: true, unique: true });
+          parentFieldUiSchema[newFieldID] = parentFieldUiSchema[oldFieldID] as UiSchema;
+          parentFieldSchema.properties[newFieldID] = parentFieldSchema.properties[oldFieldID];
+          delete parentFieldUiSchema[oldFieldID];
+          delete parentFieldSchema.properties[oldFieldID];
           state.selectedField = newFieldPath;
         }
 
         // Normal flow
 
-        const fieldType = (parentFieldUiSchema[newFieldName] as UiSchema)["ui:options"]?.fieldType as FieldType | undefined;
+        const fieldType = (parentFieldUiSchema[newFieldID] as UiSchema)["ui:options"]?.fieldType as FieldType | undefined;
 
         if (!fieldType) {
           throw new Error("fieldType is missing.");
@@ -498,37 +497,37 @@ const editorSlice = createSlice({
 
         for (const propertyKey of Object.keys(configProperties)) {
           console.log(`Checking ${propertyKey} => ${action.payload.formData[propertyKey]}`);
-          if (propertyKey === "fieldName") {
+          if (propertyKey === "fieldID") {
             // DO nothing
           } else {
             if (propertyKey === "required") {
               if (action.payload.formData[propertyKey]) {
                 // Add the field to required[]
-                parentFieldSchema.required?.push(newFieldName);
+                parentFieldSchema.required?.push(newFieldID);
                 uniq(parentFieldSchema.required, { mutate: true });
               } else {
                 // Remove the field from required[]
-                remove(parentFieldSchema?.required, newFieldName, { mutate: true });
+                remove(parentFieldSchema?.required, newFieldID, { mutate: true });
               }
             }
 
             // Schema fields
-            else if (schemaConfigProperties.includes(propertyKey)) {
+            else if ((schemaConfigProperties as string[]).includes(propertyKey)) {
               console.log(`Updating ${propertyKey} => ${action.payload.formData[propertyKey]} => in schema`);
               // @ts-expect-error - ToDo
-              parentFieldSchema.properties[newFieldName][propertyKey] = action.payload.formData[propertyKey];
+              parentFieldSchema.properties[newFieldID][propertyKey] = action.payload.formData[propertyKey];
             }
 
             // UiOptions fields
             else if (uiSchemaConfigProperties.includes(propertyKey)) {
               console.log(`Updating ${propertyKey} => ${action.payload.formData[propertyKey]} => in uiSchema`);
 
-              parentFieldUiSchema[newFieldName]["ui:options"][propertyKey] = action.payload.formData[propertyKey];
+              parentFieldUiSchema[newFieldID]["ui:options"][propertyKey] = action.payload.formData[propertyKey];
             }
           }
         }
         state.formData = {};
-        console.log("updated ui schema => ", JSON.stringify(parentFieldUiSchema[newFieldName], null, 4));
+        console.log("updated ui schema => ", JSON.stringify(parentFieldUiSchema[newFieldID], null, 4));
       }
     ),
 

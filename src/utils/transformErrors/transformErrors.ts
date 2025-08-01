@@ -1,4 +1,4 @@
-import { humanizeFieldName } from "@/utils";
+import { humanizeFieldID } from "@/utils";
 import { RJSFValidationError } from "@rjsf/utils";
 import { JSONSchema7 } from "json-schema";
 
@@ -7,7 +7,7 @@ export const transformErrors = (errors: RJSFValidationError[], schema: JSONSchem
     if (error.name === "required" && error.params?.missingProperty) {
       const { missingProperty } = error.params;
 
-      const fieldTitle = (schema.properties?.[missingProperty] as JSONSchema7)?.title ?? humanizeFieldName(missingProperty);
+      const fieldTitle = (schema.properties?.[missingProperty] as JSONSchema7)?.title ?? humanizeFieldID(missingProperty);
 
       return {
         ...error,

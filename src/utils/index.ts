@@ -1,10 +1,10 @@
-export * from "./generateUniqueFieldName";
+export * from "./generateUniqueFieldID";
 
 export * from "./getEmptyStepDefinition";
 
 export * from "./handleKey";
 
-export * from "./humanizeFieldName";
+export * from "./humanizeFieldID";
 
 export * from "./schemaUtils";
 

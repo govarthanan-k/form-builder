@@ -53,18 +53,18 @@ function getAllPropertyPaths(schema: JSONSchema7, basePath = ""): string[] {
   return paths;
 }
 
-const getFieldNameFromFieldId = ({
+const getFieldIDFromFieldId = ({
   activeStep,
-  fieldName,
+  fieldID,
   formDefinition,
 }: {
-  fieldName: string;
+  fieldID: string;
   formDefinition: FormDefinition;
   activeStep: number;
 }): string => {
   return (
     getSchemaFromDotPath({
-      dotPath: fieldName,
+      dotPath: fieldID,
       schema: formDefinition.stepDefinitions[activeStep].schema,
     })?.title ?? ""
   );
@@ -128,7 +128,7 @@ export const RightPanel = () => {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  Field Properties of {getFieldNameFromFieldId({ fieldName: selectedField, formDefinition, activeStep })}
+                  Field Properties of {getFieldIDFromFieldId({ fieldID: selectedField, formDefinition, activeStep })}
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid gap-6">

@@ -14,6 +14,12 @@ import { ROOT_EFORM_ID_PREFIX } from "@/constants";
 
 export const CustomFieldTemplate = (props: FieldTemplateProps) => {
   const FieldTemplate = getDefaultRegistry().templates.FieldTemplate;
+
+  return <FieldTemplate {...props}>{props.uiSchema?.["ui:options"]?.hidden ? <></> : props.children}</FieldTemplate>;
+};
+
+export const EditorCustomFieldTemplate = (props: FieldTemplateProps) => {
+  const FieldTemplate = getDefaultRegistry().templates.FieldTemplate;
   const { selectedField } = useAppSelector((state) => state.editor);
   const dispatch = useAppDispatch();
 

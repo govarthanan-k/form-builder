@@ -72,7 +72,7 @@ export interface RuleItemProps {
 }
 
 export interface SimpleCondition {
-  [fieldName: string]: OperatorValue;
+  [fieldID: string]: OperatorValue;
 }
 
 export const AND = "and";
