@@ -564,6 +564,11 @@ const editorSlice = createSlice({
         state.formDefinition.stepDefinitions[oldIndex],
       ];
     }),
+
+    updateStepDetails: create.reducer((state, action: PayloadAction<{ stepName: string }>) => {
+      const { stepName } = action.payload;
+      state.formDefinition.stepDefinitions[state.activeStep].stepName = stepName;
+    }),
   }),
 });
 
@@ -582,6 +587,7 @@ export const {
   updateFormData,
   updateSelectedField,
   updateSelectedFieldPropertiesFormData,
+  updateStepDetails,
   updateTemplatePreviewOpen,
 } = editorSlice.actions;
 
