@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import RuleBuilderApp from "../../components/RulesBuilderNew";
+import { RulesBuilder } from "@/components/RulesBuilderPlugin";
 
 const initialRules = [
   {
@@ -49,5 +49,5 @@ export default function EFormDesigner() {
 
   if (!isClient) return null;
 
-  return <RuleBuilderApp />;
+  return <RulesBuilder />;
 }

@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import { updateActiveTabInRightPanel } from "@/store/features";
 import { FormDefinition, RightPanelTab } from "@/store/features/editor/editor.types";
 import { getSchemaFromDotPath } from "@/utils";
+import { JSONSchema7 } from "json-schema";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +13,45 @@ import { JsonEditor } from "@/components/JsonEditor";
 import { StepProperties } from "@/components/StepProperties";
 
 import RuleBuilderApp from "../RulesBuilderNew";
+
+function getAllPropertyPaths(schema: JSONSchema7, basePath = ""): string[] {
+  const paths = [];
+
+  if (schema.type === "object" && schema.properties) {
+    for (const key of Object.keys(schema.properties)) {
+      const newPath = basePath ? `${basePath}.${key}` : key;
+      paths.push(newPath);
+      paths.push(...getAllPropertyPaths(schema.properties[key] as JSONSchema7, newPath));
+    }
+  }
+
+  if (schema.type === "array") {
+    const itemSchema = schema.items;
+
+    if (Array.isArray(itemSchema)) {
+      // Tuple validation (fixed items)
+      for (let i = 0; i < itemSchema.length; i++) {
+        const newPath = basePath;
+        paths.push(...getAllPropertyPaths(itemSchema[i] as JSONSchema7, newPath));
+      }
+    } else if (itemSchema && typeof itemSchema === "object") {
+      // Single schema for additional items
+      paths.push(...getAllPropertyPaths(itemSchema, basePath));
+    }
+  }
+
+  for (const keyword of ["allOf", "anyOf", "oneOf"]) {
+    // @ts-expect-error Todo
+    if (Array.isArray(schema[keyword])) {
+      // @ts-expect-error Todo
+      for (const sub of schema[keyword]) {
+        paths.push(...getAllPropertyPaths(sub, basePath));
+      }
+    }
+  }
+
+  return paths;
+}
 
 const getFieldNameFromFieldId = ({
   activeStep,
@@ -121,7 +161,7 @@ export const RightPanel = () => {
           </Card>
         </TabsContent>
         <TabsContent value="Rules">
-          <RuleBuilderApp />
+          <RuleBuilderApp fieldList={getAllPropertyPaths(formDefinition.stepDefinitions[activeStep].schema)} />
           {/* <Card>
             <CardContent className="grid gap-6">
               <h2 className="text-primary text-lg font-semibold">Step Rules</h2>
