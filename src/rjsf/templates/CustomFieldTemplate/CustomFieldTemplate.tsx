@@ -23,7 +23,9 @@ export const EditorCustomFieldTemplate = (props: FieldTemplateProps) => {
   const { selectedField } = useAppSelector((state) => state.editor);
   const dispatch = useAppDispatch();
 
-  return props.id !== ROOT_EFORM_ID_PREFIX ? (
+  const isFieldAnArrayItem = Number.isInteger(Number(props.id.split(".")?.pop()));
+
+  return props.id !== ROOT_EFORM_ID_PREFIX && !isFieldAnArrayItem ? (
     <div
       className={cn(
         "group relative box-border grid gap-3 border p-4 px-4 pt-6 pb-4 transition-colors",

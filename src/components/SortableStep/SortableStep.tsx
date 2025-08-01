@@ -38,7 +38,7 @@ export const SortableStep: React.FC<SortableStepProps> = ({ activeStep, allowDel
             {index + 1} - {stepDefinition.stepName}
           </span>
         </div>
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-3">
           <SquarePen className="h-4 w-4 cursor-pointer" onClick={() => onSelectStep(index)} />
           {allowDelete && (
             <Trash2

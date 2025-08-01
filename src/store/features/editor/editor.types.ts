@@ -8,6 +8,7 @@ export interface EditorState {
   devMode: boolean;
   autoSave: boolean;
   activeTabInRightPanel: RightPanelTab;
+  inspectType?: "Form" | "Step" | "Field";
   activeStep: number;
   formDefinition: FormDefinition;
   formData: FormData;
@@ -29,7 +30,7 @@ export interface FormDefinition {
   stepDefinitions: StepDefinition[];
 }
 
-export type RightPanelTab = "Inspect" | "Data Schema" | "UI Schema" | "Form Data" | "Rules";
+export type RightPanelTab = "Inspect" | "Data Schema" | "UI Schema" | "Form Data";
 
 export interface StepDefinition {
   stepName: string;

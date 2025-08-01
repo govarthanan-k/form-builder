@@ -44,11 +44,6 @@ export const AddNewStepModal = () => {
     }
   };
 
-  const onError = () => {
-    // This will be called if there are validation errors
-    console.log("Form has validation errors");
-  };
-
   const customValidate = (formData: StepFormData, errors: FormValidation): FormValidation => {
     const stepNames = formDefinition.stepDefinitions.map((s) => s.stepName.trim().toLowerCase());
     const currentStep = formData.stepName?.trim().toLowerCase();
@@ -94,7 +89,6 @@ export const AddNewStepModal = () => {
         customValidate={customValidate}
         onChange={handleChange}
         onSubmit={onSubmit}
-        onError={onError}
         noHtml5Validate
         liveValidate={liveValidate}
         templates={{ ErrorListTemplate }}

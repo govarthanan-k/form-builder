@@ -69,7 +69,6 @@ export const FieldPropertiesForm = () => {
     // Run the engine to evaluate the conditions
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     engine.run(formDataAfterRules).then((results: any) => {
-      console.log(results);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       results.forEach((event: any) => {
         const { params: eventParams, type: eventType } = event;
@@ -118,9 +117,7 @@ export const FieldPropertiesForm = () => {
       return;
     }
 
-    console.log("Errors => ", e);
     const formDataAfterRules = structuredClone(e.formData);
-    console.log("formDataBeforeRules => ", formDataAfterRules);
     const engine = new RulesEngine();
     const newSchema = structuredClone(schema);
     const newUiSchema = structuredClone(uiSchema);
@@ -132,7 +129,6 @@ export const FieldPropertiesForm = () => {
     // Run the engine to evaluate the conditions
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     engine.run(formDataAfterRules).then((results: any) => {
-      console.log(results);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       results.forEach((event: any) => {
         const { params: eventParams, type: eventType } = event;
@@ -143,7 +139,6 @@ export const FieldPropertiesForm = () => {
 
       setRulesModifiedSchema(newSchema);
       setRulesModifiedUiSchema(newUiSchema);
-      console.log("formDataAfterRules => ", formDataAfterRules);
       dispatch(updateSelectedFieldPropertiesFormData({ formData: formDataAfterRules }));
     });
   };
@@ -156,9 +151,6 @@ export const FieldPropertiesForm = () => {
         options: { parent: true },
       })?.properties || {};
     const existingFieldIDs = Object.keys(exstingFieldsInSameLevel);
-
-    console.log("In customValidate , existingFieldIDs => ", existingFieldIDs);
-    console.log("In customValidate , formData => ", formData);
 
     if (
       selectedField.split(".").pop() !== (formData as unknown as { fieldID: string }).fieldID &&

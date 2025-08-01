@@ -6,6 +6,7 @@ import {
   resetFormData,
   updateActiveStep,
   updateAddStepModalOpen,
+  updateInspectType,
   updateTemplatePreviewOpen,
 } from "@/store/features";
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
@@ -13,7 +14,7 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import Form from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
-import { ArrowRight, Plus, RefreshCw } from "lucide-react";
+import { ArrowRight, Plus, RefreshCw, SquarePen } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -50,19 +51,31 @@ export const MiddlePanel = () => {
         <div className="middle-panel-steps m-5 w-1/5">
           <Card className="gap-0 pt-4 pb-0">
             <CardHeader className="border-border border-b !pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-3xl font-semibold">Steps</CardTitle>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button size="icon" variant="ghost" onClick={() => dispatch(updateAddStepModalOpen({ isOpen: true }))}>
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Add Step</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+              {/*  */}
+
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-row items-center gap-2">
+                  <CardTitle className="text-3xl font-semibold">Steps</CardTitle>
+                </div>
+                <div className="flex items-center justify-center gap-3">
+                  <SquarePen
+                    className="h-4 w-4 cursor-pointer"
+                    onClick={() => {
+                      dispatch(updateInspectType({ inspectType: "Form" }));
+                    }}
+                  />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Plus className="h-4 w-4" onClick={() => dispatch(updateAddStepModalOpen({ isOpen: true }))} />
+                      </TooltipTrigger>
+                      <TooltipContent>Add Step</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
               </div>
+
+              {/*  */}
             </CardHeader>
 
             <CardContent className="flex flex-col px-0">

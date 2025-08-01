@@ -112,6 +112,7 @@ const initialState: EditorState = {
   autoSave: false,
   devMode: true,
   activeTabInRightPanel: "Inspect",
+  inspectType: "Form",
   selectedFieldPropertiesFormData: {},
   isAddStepModalOpen: false,
   formDefinition: {
@@ -319,7 +320,6 @@ const mapFieldSchemasToFormData = ({
     schema: stepSchema,
     options: { parent: false },
   });
-  console.log("fieldSchema => ", JSON.stringify(fieldSchema, null, 4));
 
   const fieldUiSchema = getUiSchemaFromDotPath({
     dotPath: fieldID,
@@ -371,6 +371,7 @@ const editorSlice = createSlice({
         uiSchema: structuredClone(uiSchema) as WritableDraft<UiSchema>,
         rules,
       };
+      state.inspectType = "Field";
     }),
 
     switchDevMode: create.reducer((state) => {
@@ -384,6 +385,10 @@ const editorSlice = createSlice({
 
     updateActiveTabInRightPanel: create.reducer((state, action: PayloadAction<{ activeTabInRightPanel: RightPanelTab }>) => {
       state.activeTabInRightPanel = action.payload.activeTabInRightPanel;
+    }),
+
+    updateInspectType: create.reducer((state, action: PayloadAction<{ inspectType: "Step" | "Form" | "Field" | undefined }>) => {
+      state.inspectType = action.payload.inspectType;
     }),
 
     addField: create.reducer((state, action: PayloadAction<{ fieldType: FieldType }>) => {
@@ -402,18 +407,33 @@ const editorSlice = createSlice({
     deleteField: create.reducer((state, action: PayloadAction<{ fieldId: string }>) => {
       let { fieldId } = action.payload;
       fieldId = fieldId.startsWith(`${ROOT_EFORM_ID_PREFIX}.`) ? fieldId.slice(`${ROOT_EFORM_ID_PREFIX}.`.length) : fieldId;
-      if (state.formDefinition.stepDefinitions[state.activeStep].schema.properties) {
-        // @ts-expect-error: For some reason, even though we do undefined check, ts compiler shows error
-        delete state.formDefinition.stepDefinitions[state.activeStep].schema.properties[fieldId];
+      const fieldName = fieldId.split(".").pop() as string;
+
+      const parentSchema = getSchemaFromDotPath({
+        dotPath: fieldId,
+        schema: state.formDefinition.stepDefinitions[state.activeStep].schema,
+        options: { parent: true },
+      });
+
+      const parentUiSchema = getUiSchemaFromDotPath({
+        dotPath: fieldId,
+        uiSchema: state.formDefinition.stepDefinitions[state.activeStep].uiSchema,
+        options: { parent: true },
+      });
+
+      if (parentSchema?.properties?.[fieldName]) {
+        delete parentSchema.properties[fieldName];
+        remove(parentSchema.required, fieldName, { mutate: true });
       }
-      delete state.formDefinition.stepDefinitions[state.activeStep].uiSchema[fieldId];
-      state.formDefinition.stepDefinitions[state.activeStep].uiSchema["ui:order"] = state.formDefinition.stepDefinitions[
-        state.activeStep
-      ].uiSchema["ui:order"]?.filter((value) => value !== fieldId);
-      state.formDefinition.stepDefinitions[state.activeStep].schema.required = state.formDefinition.stepDefinitions[
-        state.activeStep
-      ].schema.required?.filter((value) => value !== fieldId);
-      state.selectedField = undefined;
+      if (parentUiSchema?.[fieldId]) {
+        delete parentUiSchema[fieldId];
+        remove(parentUiSchema["ui:order"], fieldName, { mutate: true });
+      }
+
+      if (state.selectedField === fieldId) {
+        state.selectedField = undefined;
+        state.inspectType = "Step";
+      }
     }),
 
     updateFormData: create.reducer((state, action: PayloadAction<{ formData: FormData }>) => {
@@ -493,8 +513,6 @@ const editorSlice = createSlice({
           throw new Error("configProperties is missing.");
         }
 
-        console.log("configProperties ", configProperties);
-
         for (const propertyKey of Object.keys(configProperties)) {
           console.log(`Checking ${propertyKey} => ${action.payload.formData[propertyKey]}`);
           if (propertyKey === "fieldID") {
@@ -527,13 +545,13 @@ const editorSlice = createSlice({
           }
         }
         state.formData = {};
-        console.log("updated ui schema => ", JSON.stringify(parentFieldUiSchema[newFieldID], null, 4));
       }
     ),
 
     updateActiveStep: create.reducer((state, action: PayloadAction<{ activeStep: number }>) => {
       state.activeStep = action.payload.activeStep;
       state.selectedField = undefined;
+      state.inspectType = "Step";
     }),
 
     updateAddStepModalOpen: create.reducer((state, action: PayloadAction<{ isOpen: boolean }>) => {
@@ -549,11 +567,13 @@ const editorSlice = createSlice({
       const newStepDefinition = getEmptyStepDefinition(action.payload.stepType, action.payload.stepName);
       state.formDefinition.stepDefinitions.push(castDraft(newStepDefinition));
       state.activeStep = state.formDefinition.stepDefinitions.length - 1;
+      state.inspectType = "Step";
     }),
 
     deleteStep: create.reducer((state, action: PayloadAction<{ index: number }>) => {
       state.formDefinition.stepDefinitions.splice(action.payload.index, 1);
       state.activeStep = 0;
+      state.inspectType = "Step";
     }),
 
     reorderSteps: create.reducer((state, action: PayloadAction<{ oldIndex: number; newIndex: number }>) => {
@@ -585,6 +605,7 @@ export const {
   updateActiveTabInRightPanel,
   updateAddStepModalOpen,
   updateFormData,
+  updateInspectType,
   updateSelectedField,
   updateSelectedFieldPropertiesFormData,
   updateStepDetails,
