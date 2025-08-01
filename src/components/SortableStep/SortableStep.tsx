@@ -2,7 +2,7 @@ import { useAppDispatch } from "@/store/app/hooks";
 import { deleteStep } from "@/store/features";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, SquarePen, Trash2 } from "lucide-react";
+import { Grip, SquarePen, Trash2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -32,7 +32,7 @@ export const SortableStep: React.FC<SortableStepProps> = ({ activeStep, allowDel
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span {...attributes} {...listeners} className="cursor-grab">
-            <GripVertical className="h-4 w-4" />
+            <Grip className="h-4 w-4" />
           </span>
           <span>
             {index + 1} - {stepDefinition.stepName}
