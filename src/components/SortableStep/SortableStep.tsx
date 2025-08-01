@@ -1,3 +1,5 @@
+import { useAppDispatch } from "@/store/app/hooks";
+import { deleteStep } from "@/store/features";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, SquarePen, Trash2 } from "lucide-react";
@@ -6,10 +8,12 @@ import { cn } from "@/lib/utils";
 
 import { SortableStepProps } from "./SortableStep.types";
 
-export const SortableStep: React.FC<SortableStepProps> = ({ activeStep, index, onSelectStep, stepDefinition }) => {
+export const SortableStep: React.FC<SortableStepProps> = ({ activeStep, allowDelete, index, onSelectStep, stepDefinition }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: stepDefinition.stepName,
   });
+
+  const dispatch = useAppDispatch();
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -36,7 +40,14 @@ export const SortableStep: React.FC<SortableStepProps> = ({ activeStep, index, o
         </div>
         <div className="flex items-center justify-center gap-2">
           <SquarePen className="h-4 w-4 cursor-pointer" onClick={() => onSelectStep(index)} />
-          <Trash2 className="h-4 w-4 cursor-pointer text-red-500" />
+          {allowDelete && (
+            <Trash2
+              className="h-4 w-4 cursor-pointer text-red-500"
+              onClick={() => {
+                dispatch(deleteStep({ index }));
+              }}
+            />
+          )}
         </div>
       </div>
     </div>

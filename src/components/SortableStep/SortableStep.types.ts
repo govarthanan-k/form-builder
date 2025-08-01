@@ -5,4 +5,5 @@ export interface SortableStepProps {
   index: number;
   activeStep: number;
   onSelectStep: (index: number) => void;
+  allowDelete?: boolean;
 }

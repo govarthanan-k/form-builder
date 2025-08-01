@@ -550,6 +550,20 @@ const editorSlice = createSlice({
       state.formDefinition.stepDefinitions.push(castDraft(newStepDefinition));
       state.activeStep = state.formDefinition.stepDefinitions.length - 1;
     }),
+
+    deleteStep: create.reducer((state, action: PayloadAction<{ index: number }>) => {
+      state.formDefinition.stepDefinitions.splice(action.payload.index, 1);
+      state.activeStep = 0;
+    }),
+
+    reorderSteps: create.reducer((state, action: PayloadAction<{ oldIndex: number; newIndex: number }>) => {
+      const { newIndex, oldIndex } = action.payload;
+
+      [state.formDefinition.stepDefinitions[oldIndex], state.formDefinition.stepDefinitions[newIndex]] = [
+        state.formDefinition.stepDefinitions[newIndex],
+        state.formDefinition.stepDefinitions[oldIndex],
+      ];
+    }),
   }),
 });
 
@@ -557,6 +571,8 @@ export const {
   addField,
   addStep,
   deleteField,
+  deleteStep,
+  reorderSteps,
   resetFormData,
   switchAutoSave,
   switchDevMode,

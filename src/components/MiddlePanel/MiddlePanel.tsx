@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
-import { resetFormData, updateActiveStep, updateAddStepModalOpen, updateTemplatePreviewOpen } from "@/store/features";
+import {
+  reorderSteps,
+  resetFormData,
+  updateActiveStep,
+  updateAddStepModalOpen,
+  updateTemplatePreviewOpen,
+} from "@/store/features";
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import Form from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
 import { ArrowRight, Plus, RefreshCw } from "lucide-react";
@@ -26,7 +30,7 @@ export const MiddlePanel = () => {
   const { activeStep, formDefinition, isAddStepModalOpen, isTemplatePreviewOpen, selectedFormTemplateForPreview } =
     useAppSelector((state) => state.editor);
   const dispatch = useAppDispatch();
-  const [items, setItems] = useState(formDefinition.stepDefinitions.map((s) => s.stepName));
+  const items = formDefinition.stepDefinitions.map((s) => s.stepName);
   const sensors = useSensors(useSensor(PointerSensor));
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -36,16 +40,9 @@ export const MiddlePanel = () => {
     if (active.id !== over.id) {
       const oldIndex = items.indexOf(active.id as string);
       const newIndex = items.indexOf(over.id as string);
-      const newItems = arrayMove(items, oldIndex, newIndex);
-      setItems(newItems);
-      // Todo: , Use formDef directly, update store with reordered list
-      // dispatch(reorderSteps(newItems));
+      dispatch(reorderSteps({ oldIndex, newIndex }));
     }
   };
-
-  useEffect(() => {
-    setItems(formDefinition.stepDefinitions.map((s) => s.stepName));
-  }, [formDefinition]);
 
   return (
     <div className="flex w-full flex-col overflow-y-auto" style={{ height: "calc(100vh - 88px)" }}>
@@ -86,6 +83,7 @@ export const MiddlePanel = () => {
                         index={index}
                         activeStep={activeStep}
                         onSelectStep={(stepIdx) => dispatch(updateActiveStep({ activeStep: stepIdx }))}
+                        allowDelete={items.length > 1}
                       />
                     );
                   })}
