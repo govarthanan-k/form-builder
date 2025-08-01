@@ -7,6 +7,7 @@ import { Rule } from "@/rjsf/descriptors/descriptors.types";
 import { actions } from "@/rjsf/rules/actions";
 import { CustomFieldTemplate } from "@/rjsf/templates/CustomFieldTemplate";
 import { ErrorListTemplate } from "@/rjsf/templates/ErrorListTemplate";
+import { GroupedObjectFieldTemplate } from "@/rjsf/templates/ErrorListTemplate/GroupedObjectFieldTemplate";
 import ToggleWidget from "@/rjsf/widgets/ToggleWidget";
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import { updateSelectedFieldPropertiesFormData } from "@/store/features";
@@ -183,6 +184,7 @@ export const FieldPropertiesForm = () => {
       templates={{
         ErrorListTemplate,
         FieldTemplate: CustomFieldTemplate,
+        ObjectFieldTemplate: GroupedObjectFieldTemplate,
       }}
       widgets={{ CheckboxWidget: ToggleWidget }}
       idSeparator="."

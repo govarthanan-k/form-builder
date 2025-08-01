@@ -63,40 +63,56 @@ export const inputFieldDescriptor: Descriptor = {
       },
     },
     uiSchema: {
+      "ui:groupOrder": ["Basic", "Validations", "*"],
+      Basic: {
+        "ui:order": ["fieldID", "title", "*"],
+      },
+      Validations: {
+        "ui:order": ["required", "pattern", "patternErrorMessage", "minLength", "maxLength", "limitErrorMessage", "*"],
+      },
       fieldID: {
         "ui:autofocus": true,
         "ui:options": {},
+        "ui:group": "Basic",
       },
       title: {
         "ui:options": {},
+        "ui:group": "Basic",
       },
       default: {
         "ui:options": {},
+        "ui:group": "Basic",
       },
       placeholder: {
         "ui:options": {},
+        "ui:group": "Basic",
       },
       required: {
         "ui:options": {},
+        "ui:group": "Validations",
       },
-      readOnly: { "ui:options": {} },
-      hidden: { "ui:options": {} },
-      pattern: { "ui:options": {} },
-      patternErrorMessage: { "ui:widget": "textarea", "ui:options": {} },
+      readOnly: { "ui:options": {}, "ui:group": "Basic" },
+      hidden: { "ui:options": {}, "ui:group": "Basic" },
+      pattern: { "ui:options": {}, "ui:group": "Validations" },
+      patternErrorMessage: { "ui:widget": "textarea", "ui:options": {}, "ui:group": "Validations" },
       hint: {
         "ui:options": {},
+        "ui:group": "Basic",
       },
       description: {
         "ui:widget": "textarea",
         "ui:options": {},
+        "ui:group": "Basic",
       },
       minLength: {
         "ui:options": {},
+        "ui:group": "Validations",
       },
       maxLength: {
         "ui:options": {},
+        "ui:group": "Validations",
       },
-      limitErrorMessage: { "ui:widget": "textarea", "ui:options": {} },
+      limitErrorMessage: { "ui:widget": "textarea", "ui:options": {}, "ui:group": "Validations" },
     },
     rules: [
       {
