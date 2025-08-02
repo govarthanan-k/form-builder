@@ -4,8 +4,6 @@ export const inputFieldDescriptor: Descriptor = {
   dataSchema: {
     type: "string",
     title: "New Input Field",
-    default: "Gova",
-    description: "This is the field description",
   },
   uiSchema: {
     "ui:options": {

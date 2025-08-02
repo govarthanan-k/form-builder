@@ -414,8 +414,6 @@ const editorSlice = createSlice({
       existingFields[newFieldID] = { ...dataSchema };
       step.uiSchema[newFieldID] = { ...uiSchema };
       step.uiSchema["ui:order"] = [...(step.uiSchema["ui:order"] ?? []), newFieldID];
-      // Todo - Remove this later
-      step.schema.required = [...(step.schema.required || []), newFieldID];
     }),
 
     deleteField: create.reducer((state, action: PayloadAction<{ fieldId: string }>) => {
