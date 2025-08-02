@@ -32,7 +32,7 @@ export default function EFormDesigner() {
         }
       }}
     >
-      <ResizablePanelGroup direction="horizontal" className="h-[calc(100vh-88px)] w-full">
+      <ResizablePanelGroup direction="horizontal" className="w-full">
         <ResizablePanel defaultSize={15} minSize={10} maxSize={30} className="rounded-md border border-gray-400">
           <div className="flex h-full items-center justify-center">
             <LeftPanel />

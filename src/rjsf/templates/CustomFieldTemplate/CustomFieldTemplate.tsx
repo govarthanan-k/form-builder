@@ -28,9 +28,9 @@ export const EditorCustomFieldTemplate = (props: FieldTemplateProps) => {
   return props.id !== ROOT_EFORM_ID_PREFIX && !isFieldAnArrayItem ? (
     <div
       className={cn(
-        "group relative box-border grid gap-3 border p-4 px-4 pt-6 pb-4 transition-colors",
+        "group relative box-border grid gap-3 border py-6 transition-colors",
         selectedField && `${ROOT_EFORM_ID_PREFIX}.${selectedField}` === props.id
-          ? "rounded-md border border-blue-500"
+          ? "rounded-md border border-blue-500 px-4 py-6 shadow-[0_0_8px_#3b82f6]/30 ring-1 ring-blue-500/30 transition hover:ring-blue-500/60"
           : "border-transparent"
       )}
     >

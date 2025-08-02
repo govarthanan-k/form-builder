@@ -124,8 +124,6 @@ const initialState: EditorState = {
         isSummaryPage: false,
         stepName: "Step-1",
         schema: {
-          title: "A registration form",
-          description: "A simple form example.",
           type: "object",
           required: ["firstName", "lastName"],
           properties: {

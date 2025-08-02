@@ -25,7 +25,7 @@ export const LeftPanel = () => {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="w-full overflow-y-auto" style={{ height: "calc(100vh - 88px)" }}>
+    <div className="hide-scrollbar w-full overflow-y-auto" style={{ height: "calc(100vh - 77px)" }}>
       <Accordion type="single" collapsible className="w-full p-2" defaultValue="item-3">
         <AccordionItem value="item-1">
           <AccordionTrigger className="text-base font-semibold">1. Form Definition</AccordionTrigger>

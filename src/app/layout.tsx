@@ -32,7 +32,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <SiteHeader />
-          <div>{children}</div>
+          <main className="flex-1 overflow-auto">{children}</main>
           <Toaster position="top-center" richColors />
         </Providers>
       </body>

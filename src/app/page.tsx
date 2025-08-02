@@ -31,17 +31,14 @@ export default function EFormDesigner() {
         }
       }}
     >
-      <div className="flex items-start" style={{ height: "calc(100vh - 88px)" }}>
-        <div className="flex w-1/6 items-center justify-center rounded-md border border-gray-400">
+      <div className="flex items-start">
+        <div className="flex h-full w-1/6 items-center justify-center rounded-md border border-gray-400">
           <LeftPanel />
         </div>
-        <div
-          className="flex flex-1 items-center justify-center rounded-md border border-gray-400"
-          style={{ height: "calc(100vh - 88px)" }}
-        >
+        <div className="hide-scrollbar flex h-full flex-1 items-center justify-center rounded-md border border-gray-400">
           <MiddlePanel />
         </div>
-        <div className="flex w-2/8 items-center justify-center rounded-md border border-gray-400">
+        <div className="flex h-full w-2/8 items-center justify-center rounded-md border border-gray-400">
           <RightPanel />
         </div>
       </div>

@@ -3,7 +3,6 @@
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import {
   reorderSteps,
-  resetFormData,
   updateActiveStep,
   updateAddStepModalOpen,
   updateInspectType,
@@ -14,18 +13,18 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import Form from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
-import { ArrowRight, Plus, RefreshCw, SquarePen } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, SquarePen } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AddNewStepModal } from "@/components/AddNewStepModal";
-import { DropZone } from "@/components/DropZone";
 import { FormCanvas } from "@/components/FormCanvas";
 import { SortableStep } from "@/components/SortableStep";
 
+import { DropZone } from "../DropZone";
 import { samplePreviewSchema } from "../LeftPanel";
+import { Button } from "../ui/button";
 
 export const MiddlePanel = () => {
   const { activeStep, formDefinition, isAddStepModalOpen, isTemplatePreviewOpen, selectedFormTemplateForPreview } =
@@ -46,13 +45,12 @@ export const MiddlePanel = () => {
   };
 
   return (
-    <div className="flex w-full flex-col overflow-y-auto" style={{ height: "calc(100vh - 88px)" }}>
+    <div className="hide-scrollbar flex w-full flex-col overflow-y-auto" style={{ height: "calc(100vh - 77px)" }}>
       <div className="flex w-full">
-        <div className="middle-panel-steps m-5 w-1/5">
+        {/* Steps */}
+        <div className="middle-panel-steps m-5 mt-[3.625rem] w-1/5">
           <Card className="gap-0 pt-4 pb-0">
             <CardHeader className="border-border border-b !pb-2">
-              {/*  */}
-
               <div className="flex items-center justify-between gap-2">
                 <div className="flex flex-row items-center gap-2">
                   <CardTitle className="text-3xl font-semibold">Steps</CardTitle>
@@ -74,8 +72,6 @@ export const MiddlePanel = () => {
                   </TooltipProvider>
                 </div>
               </div>
-
-              {/*  */}
             </CardHeader>
 
             <CardContent className="flex flex-col px-0">
@@ -106,37 +102,53 @@ export const MiddlePanel = () => {
           </Card>
         </div>
 
+        {/* Form */}
         <div className="middle-panel-form m-5 ml-0 w-4/5">
-          <Card>
-            <div className="flex flex-col items-center gap-4 p-6">
-              <DropZone />
-            </div>
-            <CardContent className="grid gap-6">
-              <FormCanvas
-                dataSchema={formDefinition.stepDefinitions[activeStep].schema}
-                uiSchema={formDefinition.stepDefinitions[activeStep].uiSchema}
-              />
-            </CardContent>
-            <CardFooter className="w-full">
-              <div className="mt-6 flex w-full items-center justify-between">
-                {/* Left buttons */}
-                <div className="flex gap-4">
-                  <Button className="bg-green-600 text-white hover:bg-green-700">Save</Button>
-                  <Button className="bg-blue-600 text-white hover:bg-blue-700">Submit</Button>
-                  <Button onClick={() => dispatch(resetFormData())} variant={"destructive"}>
-                    Reset Form
-                    <RefreshCw className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
+          <DropZone>
+            <Card className="w-full">
+              <CardHeader className="border-border border-b !pb-2">
+                <CardTitle className="text-3xl font-semibold">{formDefinition.stepDefinitions[activeStep].stepName}</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-6">
+                <FormCanvas
+                  dataSchema={formDefinition.stepDefinitions[activeStep].schema}
+                  uiSchema={formDefinition.stepDefinitions[activeStep].uiSchema}
+                />
+              </CardContent>
+              <CardFooter className="w-full">
+                <div className="flex w-full items-center justify-between">
+                  {/* Left side: Back + Secondary Actions */}
+                  <div className="flex items-center gap-3">
+                    {activeStep !== 0 && (
+                      <Button type="button" variant="secondary" className="gap-2" disabled>
+                        <ChevronLeft className="h-4 w-4" />
+                        Back
+                      </Button>
+                    )}
+                  </div>
 
-                {/* Right button */}
-                <Button>
-                  Next
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </CardFooter>
-          </Card>
+                  {/* Right side: Primary Forward Action */}
+                  <div className="flex items-center gap-3">
+                    <Button type="button" variant="secondary" className="gap-2">
+                      Save
+                    </Button>
+
+                    {activeStep === formDefinition.stepDefinitions.length - 1 && (
+                      <Button type="submit" variant="secondary" className="gap-2">
+                        Submit
+                      </Button>
+                    )}
+                    {activeStep !== formDefinition.stepDefinitions.length - 1 && (
+                      <Button type="button" variant="secondary" className="gap-2">
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardFooter>
+            </Card>
+          </DropZone>
         </div>
       </div>
       <Dialog open={isAddStepModalOpen} onOpenChange={(isOpen) => dispatch(updateAddStepModalOpen({ isOpen }))}>
