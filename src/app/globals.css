@@ -126,3 +126,11 @@
   outline: none !important;
   box-shadow: 0 0 0 2px var(--color-ring) !important;
 }
+
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}

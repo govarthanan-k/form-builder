@@ -1,6 +1,6 @@
 "use client";
 
-import { JsonEditor } from "@/components/JsonEditor";
+import { AutoResizeMonaco } from "@/app/code-viewer/Comp";
 
 import { StepPropertiesForm } from "../StepPropertiesForm";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -20,7 +20,7 @@ export const StepProperties = () => {
           <CardTitle>Step Rules</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-6">
-          <JsonEditor height="500px" value={{}} />
+          <AutoResizeMonaco value={JSON.stringify({}, null, 2)} autoWidth />
         </CardContent>
       </Card>
     </>

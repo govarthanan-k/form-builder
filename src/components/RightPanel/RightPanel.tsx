@@ -21,7 +21,7 @@ export const RightPanel = () => {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="w-full overflow-y-auto" style={{ height: "calc(100vh - 88px)" }}>
+    <div className="hide-scrollbar w-full overflow-y-auto" style={{ height: "calc(100vh - 88px)" }}>
       <Tabs
         defaultValue="Inspect"
         className="w-full"
