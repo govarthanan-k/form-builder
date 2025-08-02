@@ -31,6 +31,18 @@ export interface FormDefinition {
   formName: string;
   stepDefinitions: StepDefinition[];
   adGroups?: string[];
+  formType: "Simple Form" | "Stepped Form";
+  status: "Draft" | "Published" | "Modified";
+  authenticationEnabled: boolean;
+  mfaEnabled: boolean;
+  lwbEnabled: boolean;
+  createdBy: string;
+  createdAt: string;
+  lastModifiedBy: string;
+  lastModifiedAt: string;
+  version: number;
+  team: string;
+  customerReferenceTemplate: string;
 }
 
 export type RightPanelTab = "Inspect" | "Data Schema" | "UI Schema" | "Form Data";

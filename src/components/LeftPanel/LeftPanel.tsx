@@ -30,19 +30,10 @@ export const LeftPanel = () => {
         <AccordionItem value="item-1">
           <AccordionTrigger className="text-base font-semibold">1. Form Definition</AccordionTrigger>
           <AccordionContent className="bg-muted space-y-3 rounded-md p-4">
-            <InfoField label="Form Type" value="Stepped Navigation" />
-            <InfoField label="Status" value="Draft" />
+            <InfoField label="Form Type" value={formDefinition.formType} />
+            <InfoField label="Status" value={formDefinition.status} />
             <InfoField
-              label="Authenticated"
-              value={
-                <span className="flex items-center gap-1">
-                  No
-                  <ShieldOff className="h-4 w-4" color="red" />
-                </span>
-              }
-            />
-            <InfoField
-              label="Authenticated"
+              label="Authentication Enabled?"
               value={
                 <span className="flex items-center gap-1">
                   Yes
@@ -50,24 +41,33 @@ export const LeftPanel = () => {
                 </span>
               }
             />
-            <InfoField label="MFA" value="No" />
-            <InfoField label="Created by" value="Govarthanan K" />
-            <InfoField label="Created at" value="2024-01-01 12:00:00" />
-            <InfoField label="Last modified by" value="John Doe" />
-            <InfoField label="Last modified at" value="2025-01-01 12:00:00" />
-            <InfoField label="Version" value="254" />
+            <InfoField
+              label="MFA Enabled?"
+              value={
+                <span className="flex items-center gap-1">
+                  No
+                  <ShieldOff className="h-4 w-4" color="red" />
+                </span>
+              }
+            />
+            <InfoField label="LWB Enabled?" value={formDefinition.lwbEnabled ? "Yes" : "No"} />
+            <InfoField label="Created by" value={formDefinition.createdBy} />
+            <InfoField label="Created at" value={formDefinition.createdAt} />
+            <InfoField label="Last modified by" value={formDefinition.lastModifiedBy} />
+            <InfoField label="Last modified at" value={formDefinition.lastModifiedAt} />
+            <InfoField label="Version" value={formDefinition.version} />
           </AccordionContent>
         </AccordionItem>
 
         <AccordionItem value="item-2">
           <AccordionTrigger className="text-base font-semibold">2. Form Attributes</AccordionTrigger>
           <AccordionContent className="bg-muted space-y-3 rounded-md p-4">
-            <InfoField label="Form Name" value="TEST_FORM" />
-            <InfoField label="Team" value="EE Application" />
+            <InfoField label="Form Name" value={formDefinition.formName} />
+            <InfoField label="Team" value={formDefinition.team} />
             <InfoField label="Owner Type" value="EFormsMockUser" />
             <InfoField label="Author" value="EFormsMockUser" />
-            <InfoField label="Unique Form Reference" value="TEST_FORM" />
-            <InfoField label="Customer Reference Template" value="${RANDOM.UUID}}" />
+            <InfoField label="Unique Form Reference" value={formDefinition.formId} />
+            <InfoField label="Customer Reference Template" value={formDefinition.customerReferenceTemplate} />
           </AccordionContent>
         </AccordionItem>
 
