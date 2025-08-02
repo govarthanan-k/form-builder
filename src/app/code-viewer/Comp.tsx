@@ -8,6 +8,7 @@ import * as monacoEditor from "monaco-editor";
 export function AutoResizeMonaco({ autoWidth, value }: { value: string; autoWidth?: boolean }) {
   const editorRef = useRef<monacoEditor.editor.IStandaloneCodeEditor | null>(null);
   const [height, setHeight] = useState<number>(100);
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleEditorDidMount: OnMount = (editor, monaco: typeof monacoEditor) => {
     editorRef.current = editor;
@@ -20,6 +21,8 @@ export function AutoResizeMonaco({ autoWidth, value }: { value: string; autoWidt
 
     updateHeight();
     editor.onDidContentSizeChange(updateHeight);
+    editor.onDidFocusEditorWidget(() => setIsFocused(true));
+    editor.onDidBlurEditorWidget(() => setIsFocused(false));
 
     // Disable Monaco's default wheel handling
     const domNode = editor.getDomNode();
@@ -41,10 +44,8 @@ export function AutoResizeMonaco({ autoWidth, value }: { value: string; autoWidt
 
   return (
     <div
-      style={{
-        height,
-        overflow: "visible",
-      }}
+      className={`rounded-md transition-all ${isFocused ? "rounded-md border border-blue-500 shadow-[0_0_8px_#3b82f6]/30 ring-1 ring-blue-500/30 transition hover:ring-blue-500/60" : "border border-transparent"}`}
+      style={{ height, overflow: "visible" }}
     >
       <Editor
         width={autoWidth ? "100%" : "500px"}

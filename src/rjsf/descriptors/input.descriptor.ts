@@ -63,12 +63,12 @@ export const inputFieldDescriptor: Descriptor = {
       },
     },
     uiSchema: {
-      "ui:groupOrder": ["Basic", "Validations", "*"],
+      "ui:groupOrder": ["Basic", "Advanced Validations", "*"],
       Basic: {
         "ui:order": ["fieldID", "title", "*"],
       },
-      Validations: {
-        "ui:order": ["required", "pattern", "patternErrorMessage", "minLength", "maxLength", "limitErrorMessage", "*"],
+      "Advanced Validations": {
+        "ui:order": ["pattern", "patternErrorMessage", "minLength", "maxLength", "limitErrorMessage", "*"],
       },
       fieldID: {
         "ui:autofocus": true,
@@ -89,12 +89,12 @@ export const inputFieldDescriptor: Descriptor = {
       },
       required: {
         "ui:options": {},
-        "ui:group": "Validations",
+        "ui:group": "Basic",
       },
       readOnly: { "ui:options": {}, "ui:group": "Basic" },
       hidden: { "ui:options": {}, "ui:group": "Basic" },
-      pattern: { "ui:options": {}, "ui:group": "Validations" },
-      patternErrorMessage: { "ui:widget": "textarea", "ui:options": {}, "ui:group": "Validations" },
+      pattern: { "ui:options": {}, "ui:group": "Advanced Validations" },
+      patternErrorMessage: { "ui:widget": "textarea", "ui:options": {}, "ui:group": "Advanced Validations" },
       hint: {
         "ui:options": {},
         "ui:group": "Basic",
@@ -106,13 +106,13 @@ export const inputFieldDescriptor: Descriptor = {
       },
       minLength: {
         "ui:options": {},
-        "ui:group": "Validations",
+        "ui:group": "Advanced Validations",
       },
       maxLength: {
         "ui:options": {},
-        "ui:group": "Validations",
+        "ui:group": "Advanced Validations",
       },
-      limitErrorMessage: { "ui:widget": "textarea", "ui:options": {}, "ui:group": "Validations" },
+      limitErrorMessage: { "ui:widget": "textarea", "ui:options": {}, "ui:group": "Advanced Validations" },
     },
     rules: [
       {

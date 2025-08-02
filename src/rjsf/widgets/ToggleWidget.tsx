@@ -77,6 +77,7 @@ export default function ToggleWidget<T = any, S extends StrictRJSFSchema = RJSFS
           onCheckedChange={_onChange}
           onBlur={_onBlur}
           onFocus={_onFocus}
+          className="data-[state=checked]:bg-blue-500"
         />
         <Label className="leading-tight" htmlFor={id}>
           {labelValue(label, hideLabel || !label)}

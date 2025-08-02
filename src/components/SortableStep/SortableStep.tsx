@@ -26,7 +26,7 @@ export const SortableStep: React.FC<SortableStepProps> = ({ activeStep, allowDel
       style={style}
       className={cn(
         "border-border dark:border-border/40 w-full rounded-md border-b px-6 py-3 select-none",
-        activeStep === index ? "bg-[#5a287d] text-white" : ""
+        activeStep === index ? "bg-blue-500 text-white" : ""
       )}
     >
       <div className="flex items-center justify-between gap-2">

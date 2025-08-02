@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { Copy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { JsonEditor } from "@/components/JsonEditor";
 
-import { JsonEditor } from "../JsonEditor";
 import { defaultFieldIcons, sampleFieldList } from "./constants";
 import { RuleItem } from "./RuleItem";
 import { Rule, RuleBuilderAppProps } from "./types";

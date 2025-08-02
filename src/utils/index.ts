@@ -1,5 +1,7 @@
 export * from "./generateUniqueFieldID";
 
+export * from "./getAllPropertyPathsInSchema";
+
 export * from "./getEmptyStepDefinition";
 
 export * from "./handleKey";

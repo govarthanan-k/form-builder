@@ -54,6 +54,7 @@ export const SiteHeader = () => {
               onCheckedChange={() => {
                 dispatch(switchDevMode());
               }}
+              className="data-[state=checked]:bg-blue-500"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -64,6 +65,7 @@ export const SiteHeader = () => {
               onCheckedChange={() => {
                 dispatch(switchAutoSave());
               }}
+              className="data-[state=checked]:bg-blue-500"
             />
           </div>
 

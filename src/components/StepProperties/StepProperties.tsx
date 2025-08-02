@@ -1,9 +1,9 @@
 "use client";
 
-import { AutoResizeMonaco } from "@/app/code-viewer/Comp";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StepPropertiesForm } from "@/components/StepPropertiesForm";
 
-import { StepPropertiesForm } from "../StepPropertiesForm";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { AutoResizeMonaco } from "@/app/code-viewer/Comp";
 
 export const StepProperties = () => {
   return (

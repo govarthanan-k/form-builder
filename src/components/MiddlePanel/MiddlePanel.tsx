@@ -15,16 +15,15 @@ import Form from "@rjsf/shadcn";
 import validator from "@rjsf/validator-ajv8";
 import { ChevronLeft, ChevronRight, Plus, SquarePen } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AddNewStepModal } from "@/components/AddNewStepModal";
+import { DropZone } from "@/components/DropZone";
 import { FormCanvas } from "@/components/FormCanvas";
+import { samplePreviewSchema } from "@/components/LeftPanel";
 import { SortableStep } from "@/components/SortableStep";
-
-import { DropZone } from "../DropZone";
-import { samplePreviewSchema } from "../LeftPanel";
-import { Button } from "../ui/button";
 
 export const MiddlePanel = () => {
   const { activeStep, formDefinition, isAddStepModalOpen, isTemplatePreviewOpen, selectedFormTemplateForPreview } =
@@ -117,17 +116,15 @@ export const MiddlePanel = () => {
               </CardContent>
               <CardFooter className="w-full">
                 <div className="flex w-full items-center justify-between">
-                  {/* Left side: Back + Secondary Actions */}
                   <div className="flex items-center gap-3">
                     {activeStep !== 0 && (
-                      <Button type="button" variant="secondary" className="gap-2" disabled>
+                      <Button type="button" variant="secondary" className="gap-2">
                         <ChevronLeft className="h-4 w-4" />
                         Back
                       </Button>
                     )}
                   </div>
 
-                  {/* Right side: Primary Forward Action */}
                   <div className="flex items-center gap-3">
                     <Button type="button" variant="secondary" className="gap-2">
                       Save
