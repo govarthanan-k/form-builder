@@ -44,110 +44,108 @@ export const MiddlePanel = () => {
   };
 
   return (
-    <div className="hide-scrollbar flex w-full flex-col overflow-y-auto" style={{ height: "calc(100vh - 77px)" }}>
-      <div className="flex w-full">
-        {/* Steps */}
-        <div className="middle-panel-steps m-5 mt-[3.625rem] w-1/5">
-          <Card className="gap-0 pt-4 pb-0">
+    <div className="flex h-[calc(100vh-77px)] w-full">
+      {/* Sticky Steps */}
+      <div className="sticky top-[3.625rem] z-10 m-5 w-1/5 self-start">
+        <Card className="gap-0 pt-4 pb-0">
+          <CardHeader className="border-border border-b !pb-2">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-row items-center gap-2">
+                <CardTitle className="text-3xl font-semibold">Steps</CardTitle>
+              </div>
+              <div className="flex items-center justify-center gap-3">
+                <SquarePen
+                  className="h-4 w-4 cursor-pointer"
+                  onClick={() => {
+                    dispatch(updateInspectType({ inspectType: "Form" }));
+                  }}
+                />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Plus className="h-4 w-4" onClick={() => dispatch(updateAddStepModalOpen({ isOpen: true }))} />
+                    </TooltipTrigger>
+                    <TooltipContent>Add Step</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent className="flex flex-col px-0">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              modifiers={[restrictToVerticalAxis]}
+            >
+              <SortableContext items={items} strategy={verticalListSortingStrategy}>
+                {items.map((stepName, index) => {
+                  const stepDefinition = formDefinition.stepDefinitions.find((s) => s.stepName === stepName)!;
+
+                  return (
+                    <SortableStep
+                      key={stepName}
+                      stepDefinition={stepDefinition}
+                      index={index}
+                      activeStep={activeStep}
+                      onSelectStep={(stepIdx) => dispatch(updateActiveStep({ activeStep: stepIdx }))}
+                      allowDelete={items.length > 1}
+                    />
+                  );
+                })}
+              </SortableContext>
+            </DndContext>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Scrollable Form */}
+      <div className="hide-scrollbar m-5 ml-0 w-4/5 overflow-y-auto" style={{ maxHeight: "calc(100vh - 77px)" }}>
+        <DropZone>
+          <Card className="w-full">
             <CardHeader className="border-border border-b !pb-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex flex-row items-center gap-2">
-                  <CardTitle className="text-3xl font-semibold">Steps</CardTitle>
+              <CardTitle className="text-3xl font-semibold">{formDefinition.stepDefinitions[activeStep].stepName}</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+              <FormCanvas
+                dataSchema={formDefinition.stepDefinitions[activeStep].schema}
+                uiSchema={formDefinition.stepDefinitions[activeStep].uiSchema}
+              />
+            </CardContent>
+            <CardFooter className="w-full">
+              <div className="flex w-full items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {activeStep !== 0 && (
+                    <Button type="button" variant="secondary" className="gap-2">
+                      <ChevronLeft className="h-4 w-4" />
+                      Back
+                    </Button>
+                  )}
                 </div>
-                <div className="flex items-center justify-center gap-3">
-                  <SquarePen
-                    className="h-4 w-4 cursor-pointer"
-                    onClick={() => {
-                      dispatch(updateInspectType({ inspectType: "Form" }));
-                    }}
-                  />
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Plus className="h-4 w-4" onClick={() => dispatch(updateAddStepModalOpen({ isOpen: true }))} />
-                      </TooltipTrigger>
-                      <TooltipContent>Add Step</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+
+                <div className="flex items-center gap-3">
+                  <Button type="button" variant="secondary" className="gap-2">
+                    Save
+                  </Button>
+
+                  {activeStep === formDefinition.stepDefinitions.length - 1 ? (
+                    <Button type="submit" variant="secondary" className="gap-2">
+                      Submit
+                    </Button>
+                  ) : (
+                    <Button type="button" variant="secondary" className="gap-2">
+                      Next
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
-            </CardHeader>
-
-            <CardContent className="flex flex-col px-0">
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-                modifiers={[restrictToVerticalAxis]}
-              >
-                <SortableContext items={items} strategy={verticalListSortingStrategy}>
-                  {items.map((stepName, index) => {
-                    const stepDefinition = formDefinition.stepDefinitions.find((s) => s.stepName === stepName)!;
-
-                    return (
-                      <SortableStep
-                        key={stepName}
-                        stepDefinition={stepDefinition}
-                        index={index}
-                        activeStep={activeStep}
-                        onSelectStep={(stepIdx) => dispatch(updateActiveStep({ activeStep: stepIdx }))}
-                        allowDelete={items.length > 1}
-                      />
-                    );
-                  })}
-                </SortableContext>
-              </DndContext>
-            </CardContent>
+            </CardFooter>
           </Card>
-        </div>
-
-        {/* Form */}
-        <div className="middle-panel-form m-5 ml-0 w-4/5">
-          <DropZone>
-            <Card className="w-full">
-              <CardHeader className="border-border border-b !pb-2">
-                <CardTitle className="text-3xl font-semibold">{formDefinition.stepDefinitions[activeStep].stepName}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-6">
-                <FormCanvas
-                  dataSchema={formDefinition.stepDefinitions[activeStep].schema}
-                  uiSchema={formDefinition.stepDefinitions[activeStep].uiSchema}
-                />
-              </CardContent>
-              <CardFooter className="w-full">
-                <div className="flex w-full items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {activeStep !== 0 && (
-                      <Button type="button" variant="secondary" className="gap-2">
-                        <ChevronLeft className="h-4 w-4" />
-                        Back
-                      </Button>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Button type="button" variant="secondary" className="gap-2">
-                      Save
-                    </Button>
-
-                    {activeStep === formDefinition.stepDefinitions.length - 1 && (
-                      <Button type="submit" variant="secondary" className="gap-2">
-                        Submit
-                      </Button>
-                    )}
-                    {activeStep !== formDefinition.stepDefinitions.length - 1 && (
-                      <Button type="button" variant="secondary" className="gap-2">
-                        Next
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </CardFooter>
-            </Card>
-          </DropZone>
-        </div>
+        </DropZone>
       </div>
+      {/* Dialogs */}
       <Dialog open={isAddStepModalOpen} onOpenChange={(isOpen) => dispatch(updateAddStepModalOpen({ isOpen }))}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
