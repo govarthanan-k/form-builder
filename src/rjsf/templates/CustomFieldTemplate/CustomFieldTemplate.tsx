@@ -9,6 +9,8 @@ import { getDefaultRegistry } from "@rjsf/core";
 import { FieldTemplateProps } from "@rjsf/utils";
 import { Settings, Trash2 } from "lucide-react";
 
+import { IconWithTooltip } from "@/components/IconWithTooltip";
+
 import { cn } from "@/lib/utils";
 import { ROOT_EFORM_ID_PREFIX } from "@/constants";
 
@@ -46,7 +48,7 @@ export const EditorCustomFieldTemplate = (props: FieldTemplateProps) => {
           }}
           onKeyDown={(e) => handleKey(e, () => alert("Delete this field"))}
         >
-          <Trash2 className="h-4 w-4" color="red" />
+          <IconWithTooltip icon={<Trash2 className="h-4 w-4" color="red" />} text="Delete Field" />
         </div>
         {/* Settings icon */}
         <div
@@ -63,7 +65,7 @@ export const EditorCustomFieldTemplate = (props: FieldTemplateProps) => {
             })
           }
         >
-          <Settings className="h-4 w-4" color="blue" />
+          <IconWithTooltip icon={<Settings className="h-4 w-4" color="blue" />} text="Edit Field" />
         </div>
       </div>
       <FieldTemplate {...props}>{props.uiSchema?.["ui:options"]?.hidden ? <></> : props.children}</FieldTemplate>

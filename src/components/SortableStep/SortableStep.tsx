@@ -4,6 +4,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Grip, SquarePen, Trash2 } from "lucide-react";
 
+import { IconWithTooltip } from "@/components/IconWithTooltip";
+
 import { cn } from "@/lib/utils";
 
 import { SortableStepProps } from "./SortableStep.types";
@@ -39,13 +41,21 @@ export const SortableStep: React.FC<SortableStepProps> = ({ activeStep, allowDel
           </span>
         </div>
         <div className="flex items-center justify-center gap-3">
-          <SquarePen className="h-4 w-4 cursor-pointer" onClick={() => onSelectStep(index)} />
+          <IconWithTooltip
+            icon={<SquarePen className="h-4 w-4 cursor-pointer" onClick={() => onSelectStep(index)} />}
+            text="Inspect Step"
+          />
           {allowDelete && (
-            <Trash2
-              className="h-4 w-4 cursor-pointer text-red-500"
-              onClick={() => {
-                dispatch(deleteStep({ index }));
-              }}
+            <IconWithTooltip
+              icon={
+                <Trash2
+                  className="h-4 w-4 cursor-pointer text-red-500"
+                  onClick={() => {
+                    dispatch(deleteStep({ index }));
+                  }}
+                />
+              }
+              text="Delete Step"
             />
           )}
         </div>

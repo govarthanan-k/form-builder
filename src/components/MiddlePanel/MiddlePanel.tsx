@@ -19,10 +19,10 @@ import { ChevronLeft, ChevronRight, Plus, SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { AddNewStepModal } from "@/components/AddNewStepModal";
 import { DropZone } from "@/components/DropZone";
 import { FormCanvas } from "@/components/FormCanvas";
+import { IconWithTooltip } from "@/components/IconWithTooltip";
 import { SortableStep } from "@/components/SortableStep";
 
 export const MiddlePanel = () => {
@@ -54,20 +54,24 @@ export const MiddlePanel = () => {
                 <CardTitle className="text-3xl font-semibold">Steps</CardTitle>
               </div>
               <div className="flex items-center justify-center gap-3">
-                <SquarePen
-                  className="h-4 w-4 cursor-pointer"
-                  onClick={() => {
-                    dispatch(updateInspectType({ inspectType: "Form" }));
-                  }}
+                <IconWithTooltip
+                  icon={
+                    <SquarePen
+                      className="h-4 w-4 cursor-pointer"
+                      onClick={() => {
+                        dispatch(updateInspectType({ inspectType: "Form" }));
+                      }}
+                    />
+                  }
+                  text="Inspect Form"
                 />
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Plus className="h-4 w-4" onClick={() => dispatch(updateAddStepModalOpen({ isOpen: true }))} />
-                    </TooltipTrigger>
-                    <TooltipContent>Add Step</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+
+                <IconWithTooltip
+                  icon={
+                    <Plus className="h-4 w-4 cursor-pointer" onClick={() => dispatch(updateAddStepModalOpen({ isOpen: true }))} />
+                  }
+                  text="Add Step"
+                />
               </div>
             </div>
           </CardHeader>
