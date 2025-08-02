@@ -30,6 +30,7 @@ export interface FormDefinition {
   formId: string;
   formName: string;
   stepDefinitions: StepDefinition[];
+  adGroups?: string[];
 }
 
 export type RightPanelTab = "Inspect" | "Data Schema" | "UI Schema" | "Form Data";

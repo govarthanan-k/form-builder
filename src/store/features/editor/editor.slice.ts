@@ -297,10 +297,8 @@ const initialState: EditorState = {
         },
       },
     ],
+    adGroups: ["admin"],
   },
-  // {
-  //   stepDefinitions: [{ ...getEmptyStepDefinition() }],
-  // }
   formData: {},
   formTemplates,
 };
@@ -381,6 +379,10 @@ const editorSlice = createSlice({
 
     switchAutoSave: create.reducer((state) => {
       state.autoSave = !state.autoSave;
+    }),
+
+    updateAdGroups: create.reducer((state, action: PayloadAction<{ adGroups: string[] }>) => {
+      state.formDefinition.adGroups = action.payload.adGroups;
     }),
 
     updateActiveTabInRightPanel: create.reducer((state, action: PayloadAction<{ activeTabInRightPanel: RightPanelTab }>) => {
@@ -603,6 +605,7 @@ export const {
   switchDevMode,
   updateActiveStep,
   updateActiveTabInRightPanel,
+  updateAdGroups,
   updateAddStepModalOpen,
   updateFormData,
   updateInspectType,

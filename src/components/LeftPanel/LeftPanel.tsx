@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
-import { updateTemplatePreviewOpen } from "@/store/features";
+import { updateAdGroups, updateTemplatePreviewOpen } from "@/store/features";
 import { JSONSchema7 } from "json-schema";
 import { ChevronDown, Eye, ShieldCheck, ShieldOff, SquareCheck, Type } from "lucide-react";
 
@@ -21,7 +21,7 @@ export const AVAILABLE_COMPONENTS = [
 ];
 
 export const LeftPanel = () => {
-  const { formTemplates } = useAppSelector((state) => state.editor);
+  const { formDefinition, formTemplates } = useAppSelector((state) => state.editor);
   const dispatch = useAppDispatch();
 
   return (
@@ -96,7 +96,14 @@ export const LeftPanel = () => {
         <AccordionItem value="item-4">
           <AccordionTrigger className="text-base font-semibold">4. Access Permissions</AccordionTrigger>
           <AccordionContent className="bg-muted space-y-3 rounded-md p-4">
-            <TagInput noTagsMessage="No AD groups added yet" tags={[]} />
+            <TagInput
+              noTagsMessage="No AD groups added yet"
+              duplicateTagMessage="AD group already added"
+              tags={formDefinition.adGroups}
+              onChange={(adGroups) => {
+                dispatch(updateAdGroups({ adGroups }));
+              }}
+            />
           </AccordionContent>
         </AccordionItem>
 
