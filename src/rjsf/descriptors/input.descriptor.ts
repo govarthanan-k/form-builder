@@ -63,56 +63,56 @@ export const inputFieldDescriptor: Descriptor = {
       },
     },
     uiSchema: {
-      "ui:groupOrder": ["Basic", "Advanced Validations", "*"],
-      Basic: {
+      "ui:groupOrder": ["General Settings", "Field Constraints", "*"],
+      "General Settings": {
         "ui:order": ["fieldID", "title", "*"],
       },
-      "Advanced Validations": {
+      "Field Constraints": {
         "ui:order": ["pattern", "patternErrorMessage", "minLength", "maxLength", "limitErrorMessage", "*"],
       },
       fieldID: {
         "ui:autofocus": true,
         "ui:options": {},
-        "ui:group": "Basic",
+        "ui:group": "General Settings",
       },
       title: {
         "ui:options": {},
-        "ui:group": "Basic",
+        "ui:group": "General Settings",
       },
       default: {
         "ui:options": {},
-        "ui:group": "Basic",
+        "ui:group": "General Settings",
       },
       placeholder: {
         "ui:options": {},
-        "ui:group": "Basic",
+        "ui:group": "General Settings",
       },
       required: {
         "ui:options": {},
-        "ui:group": "Basic",
+        "ui:group": "General Settings",
       },
-      readOnly: { "ui:options": {}, "ui:group": "Basic" },
-      hidden: { "ui:options": {}, "ui:group": "Basic" },
-      pattern: { "ui:options": {}, "ui:group": "Advanced Validations" },
-      patternErrorMessage: { "ui:widget": "textarea", "ui:options": {}, "ui:group": "Advanced Validations" },
+      readOnly: { "ui:options": {}, "ui:group": "General Settings" },
+      hidden: { "ui:options": {}, "ui:group": "General Settings" },
+      pattern: { "ui:options": {}, "ui:group": "Field Constraints" },
+      patternErrorMessage: { "ui:widget": "textarea", "ui:options": {}, "ui:group": "Field Constraints" },
       hint: {
         "ui:options": {},
-        "ui:group": "Basic",
+        "ui:group": "General Settings",
       },
       description: {
         "ui:widget": "textarea",
         "ui:options": {},
-        "ui:group": "Basic",
+        "ui:group": "General Settings",
       },
       minLength: {
         "ui:options": {},
-        "ui:group": "Advanced Validations",
+        "ui:group": "Field Constraints",
       },
       maxLength: {
         "ui:options": {},
-        "ui:group": "Advanced Validations",
+        "ui:group": "Field Constraints",
       },
-      limitErrorMessage: { "ui:widget": "textarea", "ui:options": {}, "ui:group": "Advanced Validations" },
+      limitErrorMessage: { "ui:widget": "textarea", "ui:options": {}, "ui:group": "Field Constraints" },
     },
     rules: [
       {
