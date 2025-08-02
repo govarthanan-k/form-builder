@@ -3,6 +3,7 @@
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import {
   reorderSteps,
+  samplePreviewSchema,
   updateActiveStep,
   updateAddStepModalOpen,
   updateInspectType,
@@ -22,7 +23,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { AddNewStepModal } from "@/components/AddNewStepModal";
 import { DropZone } from "@/components/DropZone";
 import { FormCanvas } from "@/components/FormCanvas";
-import { samplePreviewSchema } from "@/components/LeftPanel";
 import { SortableStep } from "@/components/SortableStep";
 
 export const MiddlePanel = () => {
@@ -156,11 +156,13 @@ export const MiddlePanel = () => {
         </DialogContent>
       </Dialog>
       <Dialog open={isTemplatePreviewOpen} onOpenChange={(isOpen) => dispatch(updateTemplatePreviewOpen({ isOpen }))}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Form Template Preview for {selectedFormTemplateForPreview}</DialogTitle>
+        <DialogContent className="!max-h-[90vh] w-full !max-w-[800px] !overflow-y-auto">
+          <DialogHeader className="border-border w-full border-b !pb-2">
+            <DialogTitle className="w-full text-2xl font-semibold">{selectedFormTemplateForPreview}</DialogTitle>
           </DialogHeader>
-          <Form schema={samplePreviewSchema} validator={validator} />
+          <Form schema={samplePreviewSchema} validator={validator} className="w-full">
+            <></>
+          </Form>
         </DialogContent>
       </Dialog>
     </div>

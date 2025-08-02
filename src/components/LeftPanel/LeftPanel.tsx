@@ -2,7 +2,6 @@
 
 import { useAppDispatch, useAppSelector } from "@/store/app/hooks";
 import { updateAdGroups, updateTemplatePreviewOpen } from "@/store/features";
-import { JSONSchema7 } from "json-schema";
 import { ChevronDown, Eye, ShieldCheck, ShieldOff, SquareCheck, Type } from "lucide-react";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -146,32 +145,4 @@ export const LeftPanel = () => {
       </Accordion>
     </div>
   );
-};
-
-export const samplePreviewSchema: JSONSchema7 = {
-  type: "object",
-  properties: {
-    firstName: {
-      type: "string",
-      title: "First name",
-    },
-    lastName: {
-      type: "string",
-      title: "Last name",
-    },
-    age: {
-      type: "integer",
-      title: "Age",
-    },
-    password: {
-      type: "string",
-      title: "Password",
-      minLength: 3,
-    },
-    telephone: {
-      type: "string",
-      title: "Telephone",
-      minLength: 10,
-    },
-  },
 };
