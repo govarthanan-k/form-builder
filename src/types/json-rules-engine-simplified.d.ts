@@ -1,15 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare module "json-rules-engine-simplified" {
+  export type Condition = LogicalCondition | SimpleCondition;
+
   export interface Event {
-    type: string;
-    params?: Record<string, any>;
+    type: EventType;
+    params: {
+      field: string[];
+    };
+  }
+  export interface LogicalCondition {
+    or?: Condition[];
+    and?: Condition[];
+    not?: Condition;
   }
 
+  export type OperatorValue = string | number | { [operator: string]: string | number };
+
   export interface Rule {
-    conditions: any;
+    conditions: Condition;
     event: Event;
-    name?: string;
-    priority?: number;
+  }
+
+  export interface SimpleCondition {
+    [fieldID: string]: OperatorValue;
   }
 
   export default class RulesEngine {

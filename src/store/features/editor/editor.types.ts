@@ -1,6 +1,6 @@
-import { Rule } from "@/rjsf/descriptors/descriptors.types";
 import { IChangeEvent } from "@rjsf/core";
 import { UiSchema } from "@rjsf/utils";
+import { Rule } from "json-rules-engine-simplified";
 import { JSONSchema7 } from "json-schema";
 
 export interface EditorState {

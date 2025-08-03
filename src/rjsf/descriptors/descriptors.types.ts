@@ -1,4 +1,5 @@
 import { UiSchema } from "@rjsf/utils";
+import { Rule } from "json-rules-engine-simplified";
 import { JSONSchema7 } from "json-schema";
 
 export interface Descriptor {
@@ -17,10 +18,4 @@ export interface PropertiesConfiguration {
     uiSchema: string[];
   };
   rules?: Rule[];
-}
-
-export interface Rule {
-  conditions: object;
-  event: object;
-  priority?: number;
 }

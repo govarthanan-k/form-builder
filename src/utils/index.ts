@@ -4,6 +4,8 @@ export * from "./getAllPropertyPathsInSchema";
 
 export * from "./getEmptyStepDefinition";
 
+export * from "./getFieldSettingsFormConfig";
+
 export * from "./handleKey";
 
 export * from "./humanizeFieldID";

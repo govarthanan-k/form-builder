@@ -24,35 +24,38 @@ export const RightPanel = () => {
             dispatch(updateActiveTabInRightPanel({ activeTabInRightPanel: value as RightPanelTab }));
           }}
         >
-          <TabsList className="flex w-full">
-            <TabsTrigger
-              value="Inspect"
-              className="flex-1 rounded-t-md border-b-2 border-transparent py-2 text-center transition-colors data-[state=active]:border-blue-700 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600"
-            >
-              Inspect
-            </TabsTrigger>
+          <div className="bg-background sticky top-0 z-10 border-b">
+            {" "}
+            <TabsList className="flex w-full">
+              <TabsTrigger
+                value="Inspect"
+                className="flex-1 rounded-t-md border-b-2 border-transparent py-2 text-center transition-colors data-[state=active]:border-blue-700 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600"
+              >
+                Inspect
+              </TabsTrigger>
 
-            <>
-              <TabsTrigger
-                value="Data Schema"
-                className="flex-1 rounded-t-md border-b-2 border-transparent py-2 text-center transition-colors data-[state=active]:border-blue-700 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600"
-              >
-                Data Schema
-              </TabsTrigger>
-              <TabsTrigger
-                value="UI Schema"
-                className="flex-1 rounded-t-md border-b-2 border-transparent py-2 text-center transition-colors data-[state=active]:border-blue-700 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600"
-              >
-                UI Schema
-              </TabsTrigger>
-              <TabsTrigger
-                value="Form Data"
-                className="flex-1 rounded-t-md border-b-2 border-transparent py-2 text-center transition-colors data-[state=active]:border-blue-700 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600"
-              >
-                Form Data
-              </TabsTrigger>
-            </>
-          </TabsList>
+              <>
+                <TabsTrigger
+                  value="Data Schema"
+                  className="flex-1 rounded-t-md border-b-2 border-transparent py-2 text-center transition-colors data-[state=active]:border-blue-700 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600"
+                >
+                  Data Schema
+                </TabsTrigger>
+                <TabsTrigger
+                  value="UI Schema"
+                  className="flex-1 rounded-t-md border-b-2 border-transparent py-2 text-center transition-colors data-[state=active]:border-blue-700 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600"
+                >
+                  UI Schema
+                </TabsTrigger>
+                <TabsTrigger
+                  value="Form Data"
+                  className="flex-1 rounded-t-md border-b-2 border-transparent py-2 text-center transition-colors data-[state=active]:border-blue-700 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600"
+                >
+                  Form Data
+                </TabsTrigger>
+              </>
+            </TabsList>
+          </div>
           <TabsContent value="Inspect">
             <InspectPanel />
           </TabsContent>

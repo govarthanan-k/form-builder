@@ -2,6 +2,7 @@ import { descriptors } from "@/rjsf/descriptors";
 import {
   generateUniqueFieldID,
   getEmptyStepDefinition,
+  getFieldSettingsFormConfig,
   getSchemaFromDotPath,
   getUiSchemaFromDotPath,
   remove,
@@ -13,7 +14,6 @@ import { UiSchema } from "@rjsf/utils";
 import { castDraft, WritableDraft } from "immer";
 import { JSONSchema7 } from "json-schema";
 
-import { getPropertiesSchema } from "@/components/FieldPropertiesForm";
 import { FieldType } from "@/components/LeftPanel";
 
 import { ROOT_EFORM_ID_PREFIX } from "@/constants";
@@ -370,7 +370,7 @@ const editorSlice = createSlice({
         formDefinition: state.formDefinition,
       });
 
-      const { rules, schema, uiSchema } = getPropertiesSchema({
+      const { rules, schema, uiSchema } = getFieldSettingsFormConfig({
         activeStep: state.activeStep,
         formDefinition: state.formDefinition,
         selectedField,
@@ -378,6 +378,7 @@ const editorSlice = createSlice({
 
       state.inspectFieldSchemas = {
         schema,
+        // need to check why we need to typecast only for ui schema
         uiSchema: structuredClone(uiSchema) as WritableDraft<UiSchema>,
         rules,
       };

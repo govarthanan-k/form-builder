@@ -8,6 +8,7 @@ export const inputFieldDescriptor: Descriptor = {
   uiSchema: {
     "ui:options": {
       fieldType: "input",
+      limitErrorMessage: "this is limit error messsafe",
     },
   },
   propertiesConfiguration: {
