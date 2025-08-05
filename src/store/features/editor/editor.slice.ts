@@ -18,7 +18,9 @@ import { FieldType } from "@/components/LeftPanel";
 
 import { ROOT_EFORM_ID_PREFIX } from "@/constants";
 
-import { EditorState, FormData, FormDefinition, RightPanelTab } from "./editor.types";
+import { FormData } from "@/types/editor.types";
+
+import { EditorState, FormDefinition, RightPanelTab } from "./editor.types";
 
 export const formTemplates = [
   { name: "Customer Intake", lastModified: "2025-07-30", author: "Alice", version: "1.0.2" },

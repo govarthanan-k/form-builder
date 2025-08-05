@@ -33,6 +33,7 @@ const eslintConfig = [
 
       // 🔧 For class methods
       "lines-between-class-members": ["error", "always"],
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
     },
     ignores: ["src/components/ui/**"],
   },

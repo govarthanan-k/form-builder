@@ -145,6 +145,17 @@ export const inputFieldDescriptor: Descriptor = {
           },
         },
       },
+      {
+        conditions: {
+          not: { pattern: "empty" },
+        },
+        event: {
+          type: "require",
+          params: {
+            field: ["patternErrorMessage"],
+          },
+        },
+      },
     ],
     mappings: {
       schema: ["title", "description", "default", "readOnly", "pattern", "minLength", "maxLength"],

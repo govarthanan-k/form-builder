@@ -1,7 +1,8 @@
-import { IChangeEvent } from "@rjsf/core";
 import { UiSchema } from "@rjsf/utils";
 import { Rule } from "json-rules-engine-simplified";
 import { JSONSchema7 } from "json-schema";
+
+import { FormData } from "@/types/editor.types";
 
 export interface EditorState {
   selectedField?: string;
@@ -23,8 +24,6 @@ export interface EditorState {
   formTemplates: { name: string; lastModified: string; author: string; version: string }[];
   selectedFormTemplateForPreview?: string;
 }
-
-export type FormData = Pick<IChangeEvent, "formData">;
 
 export interface FormDefinition {
   formId: string;

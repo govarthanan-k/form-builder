@@ -17,6 +17,8 @@ import { FormWithRules } from "@/components/FormWithRules";
 
 import { PROPERTIES_ROOT_EFORM_ID_PREFIX } from "@/constants";
 
+import { FormData } from "@/types/editor.types";
+
 export const FieldPropertiesForm = () => {
   const {
     activeStep,

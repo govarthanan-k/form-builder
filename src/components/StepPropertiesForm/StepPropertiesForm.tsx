@@ -10,6 +10,8 @@ import { JSONSchema7 } from "json-schema";
 
 import { ROOT_STEP_PROPERTIES_ID_PREFIX } from "@/constants";
 
+import { FormData } from "@/types/editor.types";
+
 const schema: JSONSchema7 = {
   type: "object",
   required: ["stepName", "stepType"],
